@@ -33,14 +33,27 @@ fmb <- -2
 int <- -2
 ```
 
+installation (only run if u haven't installed these packages yet)
+```{r}
+install.packages("tidyverse")
+install.packages("rvest")
+install.packages("stringr")
+install.packages("stringdist")
+install.packages("randomForest")
+install.packages("Matrix")
+install.packages("lubridate")
+install.packages("glmnet")
+install.packages("caret")
+install.packages("pls")
+```
 
+load packages
 ```{r}
 library(tidyverse)
 library(rvest)
 library(stringr)
 library(stringdist)
 library(randomForest)
-library(xgboost)
 library(Matrix)
 library(lubridate)
 library(glmnet)
