@@ -1,0 +1,501 @@
+Rank,Name,ADP,Change
+1,"Saquon Barkley
+NYGRB",1.4,0
+2,"Christian McCaffrey
+CarRB",2.8,0.2
+3,"Alvin Kamara
+NORB",3.3,0
+4,"Ezekiel ElliottQ
+DalRB",5.7,0.2
+5,"David Johnson
+AriRB",7.7,0.3
+6,"DeAndre Hopkins
+HouWR",7.7,0.9
+7,"Le'Veon Bell
+NYJRB",7.8,-0.4
+8,"Todd Gurley II
+LARRB",9.6,-0.7
+9,"Michael Thomas
+NOWR",10.1,0.9
+10,"Davante Adams
+GBWR",11.2,-0.9
+11,"Julio JonesQ
+AtlWR",12.2,0
+12,"Tyreek Hill
+KCWR",14.4,1
+13,"Odell Beckham Jr.Q
+CleWR",14.6,0.4
+14,"Travis Kelce
+KCTE",15.5,-0.4
+15,"JuJu Smith-Schuster
+PitWR",17.1,1.2
+16,"James Conner
+PitRB",18.2,0.5
+17,"Joe Mixon
+CinRB",19,0.3
+18,"Patrick Mahomes
+KCQB",19.1,-2
+19,"Antonio Brown
+OakWR",20.7,1
+20,"Melvin GordonO
+LACRB",21.2,-4.7
+21,"Mike EvansQ
+TBWR",23.6,0.4
+22,"Dalvin Cook
+MinRB",23.9,1.6
+23,"Nick Chubb
+CleRB",25.5,3.6
+24,"Keenan Allen
+LACWR",26,0.4
+25,"Leonard Fournette
+JaxRB",29,-0.6
+26,"Zach Ertz
+PhiTE",29.3,-1.8
+27,"George Kittle
+SFTE",29.4,-0.6
+28,"Amari CooperQ
+DalWR",30.2,-0.2
+29,"T.Y. Hilton
+IndWR",31.2,-1.3
+30,"Adam Thielen
+MinWR",31.6,-0.4
+31,"Julian Edelman
+NEWR",33.8,-0.6
+32,"Devonta Freeman
+AtlRB",34.1,3.4
+33,"Kerryon Johnson
+DetRB",34.4,3.8
+34,"Derrick HenryQ
+TenRB",39.6,1.1
+35,"Brandin Cooks
+LARWR",40.1,-0.5
+36,"Stefon Diggs
+MinWR",40.2,-0.8
+37,"Josh Jacobs
+OakRB",40.5,3.7
+38,"Deshaun Watson
+HouQB",41.7,0.1
+39,"Marlon Mack
+IndRB",46.3,2.5
+40,"Robert Woods
+LARWR",47.9,1.2
+41,"Chris Carson
+SeaRB",47.9,8.8
+42,"Aaron Jones
+GBRB",48.6,2
+43,"Aaron Rodgers
+GBQB",49.4,-4
+44,"Evan Engram
+NYGTE",52.9,-0.9
+45,"Damien Williams
+KCRB",53.3,4
+46,"Kenny Golladay
+DetWR",53.9,0.9
+47,"Mark Ingram II
+BalRB",54.3,3.9
+48,"Cooper KuppQ
+LARWR",54.9,1.2
+49,"Matt Ryan
+AtlQB",55.9,4.4
+50,"Alshon Jeffery
+PhiWR",57,0.1
+51,"Sony Michel
+NERB",59.3,-0.7
+52,"Baker Mayfield
+CleQB",59.9,-1.1
+53,"Tyler Lockett
+SeaWR",59.9,5.3
+54,"James White
+NERB",63.2,-0.2
+55,"Chris Godwin
+TBWR",63.3,2
+56,"O.J. Howard
+TBTE",65.1,0.6
+57,"Mike Williams
+LACWR",67.2,2.9
+58,"Jared Cook
+NOTE",67.5,3.4
+59,"Bears D/ST
+ChiD/ST",69.7,-6.9
+60,"Hunter Henry
+LACTE",70.7,0.9
+61,"A.J. GreenD
+CinWR",70.9,2.3
+62,"Phillip Lindsay
+DenRB",71.3,1
+63,"DJ Moore
+CarWR",71.4,4.3
+64,"David Montgomery
+ChiRB",71.5,5
+65,"Calvin Ridley
+AtlWR",72.4,3.6
+66,"Tyler Boyd
+CinWR",73,4.6
+67,"Kenyan DrakeQ
+MiaRB",73.3,1.5
+68,"Cam NewtonQ
+CarQB",74.4,7.9
+69,"Drew Brees
+NOQB",74.6,-1.7
+70,"Jarvis Landry
+CleWR",74.8,-1.3
+71,"Tarik Cohen
+ChiRB",77.9,2.7
+72,"Sammy Watkins
+KCWR",78.2,1
+73,"Andrew LuckQ
+IndQB",80,-12.6
+74,"Allen Robinson
+ChiWR",80.2,4.8
+75,"Sterling ShepardQ
+NYGWR",86.8,2.5
+76,"Derrius Guice
+WshRB",87,1.9
+77,"Carson Wentz
+PhiQB",87.2,7.7
+78,"Lamar Miller
+HouRB",87.8,-0.9
+79,"Greg Zuerlein
+LARK",90.7,-3.9
+80,"Tevin Coleman
+SFRB",93.6,2.2
+81,"Robby Anderson
+NYJWR",94.2,3.7
+82,"Miles Sanders
+PhiRB",96.5,1.3
+83,"Austin Ekeler
+LACRB",97.3,0.6
+84,"Rams D/ST
+LARD/ST",97.3,-8.2
+85,"Vance McDonald
+PitTE",97.7,2.9
+86,"David NjokuQ
+CleTE",97.8,-3.8
+87,"Dede Westbrook
+JaxWR",98.6,4.8
+88,"Will Fuller VQ
+HouWR",99,1.3
+89,"Eric Ebron
+IndTE",99.7,-0.5
+90,"Justin Tucker
+BalK",100.6,-4.1
+91,"Jaguars D/ST
+JaxD/ST",101,-2.5
+92,"Marvin Jones Jr.Q
+DetWR",103.2,0.8
+93,"Emmanuel Sanders
+DenWR",103.5,8.7
+94,"Tom Brady
+NEQB",105.9,2
+95,"Christian Kirk
+AriWR",106.3,1.5
+96,"Dak Prescott
+DalQB",108.2,1.9
+97,"Russell Wilson
+SeaQB",108.7,2.9
+98,"Bills D/ST
+BufD/ST",109.7,-6.2
+99,"Larry Fitzgerald
+AriWR",111.1,1
+100,"Ben Roethlisberger
+PitQB",112.9,3.5
+101,"Delanie Walker
+TenTE",114.1,2.5
+102,"Jared Goff
+LARQB",115.3,3.3
+103,"Royce Freeman
+DenRB",115.4,3.1
+104,"Duke Johnson Jr.
+HouRB",116.9,14.4
+105,"Vikings D/ST
+MinD/ST",117.1,-1.6
+106,"Corey Davis
+TenWR",117.2,-1
+107,"Wil Lutz
+NOK",117.5,-3.5
+108,"Josh GordonO
+NEWR",117.7,51.5
+109,"Rashaad Penny
+SeaRB",117.7,0.8
+110,"Kyler Murray
+AriQB",117.7,-10.5
+111,"Harrison Butker
+KCK",118.4,-2.9
+112,"Saints D/ST
+NOD/ST",119.4,1.8
+113,"Austin Hooper
+AtlTE",121,4.7
+114,"Stephen Gostkowski
+NEK",121.5,-2.7
+115,"LeSean McCoy
+BufRB",122,-2.5
+116,"Jordan Howard
+PhiRB",122.5,-1.2
+117,"Dante Pettis
+SFWR",122.6,-10.7
+118,"Latavius Murray
+NORB",124.9,0.4
+119,"Curtis Samuel
+CarWR",125.1,6.9
+120,"Nyheim Hines
+IndRB",127.3,1.3
+121,"Peyton Barber
+TBRB",128.1,0.8
+122,"Darrell Henderson
+LARRB",129,-7.1
+123,"Courtland Sutton
+DenWR",129.8,1.2
+124,"Michael Gallup
+DalWR",132.8,3.5
+125,"Ka'imi Fairbairn
+HouK",134.8,-1.6
+126,"DeSean Jackson
+PhiWR",135.2,-3.7
+127,"Lamar Jackson
+BalQB",135.3,10.4
+128,"Chargers D/ST
+LACD/ST",136.7,-5
+129,"Matt Breida
+SFRB",136.8,8.9
+130,"Patriots D/ST
+NED/ST",136.8,-2
+131,"Keke CouteeQ
+HouWR",137.6,2
+132,"Donte Moncrief
+PitWR",138.3,0.5
+133,"James Washington
+PitWR",138.4,0.3
+134,"Greg Olsen
+CarTE",139.9,-2.3
+135,"Jamison Crowder
+NYJWR",140.6,19.5
+136,"Kareem HuntSSPD
+CleRB",140.7,-1
+137,"Robbie Gould
+SFK",142.6,-2.1
+138,"Geronimo Allison
+GBWR",143.2,0.9
+139,"Jordan ReedQ
+WshTE",144.5,3.5
+140,"DK MetcalfQ
+SeaWR",144.8,-4
+141,"Carlos Hyde
+KCRB",145.1,0.8
+142,"Marquez Valdes-Scantling
+GBWR",147.6,-0.7
+143,"Trey BurtonQ
+ChiTE",148.2,-1.8
+144,"Mitchell Trubisky
+ChiQB",149.3,0.4
+145,"Philip Rivers
+LACQB",149.7,2.5
+146,"Colts D/ST
+IndD/ST",149.8,-3.7
+147,"Devin Funchess
+IndWR",151.7,2.1
+148,"Tyrell WilliamsQ
+OakWR",152.1,0.6
+149,"Eagles D/ST
+PhiD/ST",152.8,2.8
+150,"Golden TateSSPD
+NYGWR",153.5,1.1
+151,"Mike Badgley
+LACK",154.2,-1.8
+152,"Kyle Rudolph
+MinTE",154.3,-0.7
+153,"Adam Vinatieri
+IndK",154.4,-2.4
+154,"Ronald Jones
+TBRB",154.7,-8.8
+155,"Browns D/ST
+CleD/ST",155.8,-6.6
+156,"Kenny Stills
+MiaWR",156.6,1.2
+157,"Dion Lewis
+TenRB",157,0.5
+158,"Jimmy GrahamQ
+GBTE",157.1,-4.1
+159,"Anthony MillerQ
+ChiWR",158.1,0.8
+160,"Jameis Winston
+TBQB",158.2,1.2
+161,"Jalen Richard
+OakRB",158.9,-2
+162,"Ravens D/ST
+BalD/ST",160,-1.2
+163,"Texans D/ST
+HouD/ST",160.1,-2.6
+164,"Mark Andrews
+BalTE",160.3,3.5
+165,"Kirk Cousins
+MinQB",160.6,1.8
+166,"Kalen Ballage
+MiaRB",160.8,0.3
+167,"Broncos D/ST
+DenD/ST",161.1,-1.4
+168,"N'Keal HarryQ
+NEWR",161.1,-9.4
+169,"Titans D/ST
+TenD/ST",161.5,-1.5
+170,"Mohamed Sanu
+AtlWR",161.9,1
+171,"Tony Pollard
+DalRB",162.5,5.7
+172,"Brett Maher
+DalK",162.9,-2.2
+173,"Mason Crosby
+GBK",163,-0.3
+174,"Adrian Peterson
+WshRB",163.6,2.1
+175,"Jaylen Samuels
+PitRB",164.3,1.8
+176,"Derek Carr
+OakQB",164.4,1.5
+177,"Cowboys D/ST
+DalD/ST",164.5,-1.4
+178,"Jake Elliott
+PhiK",164.6,-1.2
+179,"Adam HumphriesQ
+TenWR",164.9,1.2
+180,"Steelers D/ST
+PitD/ST",165,-0.2
+181,"Jack Doyle
+IndTE",165.1,0.8
+182,"Jimmy Garoppolo
+SFQB",165.3,-1.2
+183,"T.J. Hockenson
+DetTE",165.6,-1.2
+184,"Jason Witten
+DalTE",165.8,-0.7
+185,"Matt Prater
+DetK",166.3,-1.4
+186,"Giovani Bernard
+CinRB",166.8,1.3
+187,"Chiefs D/ST
+KCD/ST",166.8,-1.2
+188,"Albert WilsonQ
+MiaWR",167.1,-0.2
+189,"Sam Darnold
+NYJQB",167.4,0.4
+190,"Josh Allen
+BufQB",167.5,0.4
+191,"Devin Singletary
+BufRB",167.6,0.1
+192,"Darwin Thompson
+KCRB",167.8,1.8
+193,"Matthew Stafford
+DetQB",168.1,0.2
+194,"C.J. Anderson
+DetRB",168.1,-1.3
+195,"Marquise Brown
+BalWR",168.1,-1.6
+196,"Panthers D/ST
+CarD/ST",168.1,-1.1
+197,"Cole Beasley
+BufWR",168.2,0.9
+198,"Mecole Hardman
+KCWR",168.3,-0.4
+199,"John Brown
+BufWR",168.4,0.8
+200,"Parris CampbellQ
+IndWR",168.4,-2
+201,"Panthers D/ST
+CarD/ST",168.5,-1.5
+202,"Jacoby Brissett
+IndQB",168.8,1.2
+203,"Deebo Samuel
+SFWR",168.9,0.2
+204,"Tyler Eifert
+CinTE",169,-0.4
+205,"Darren Waller
+OakTE",169,0.4
+206,"Justice Hill
+BalRB",169.1,0.9
+207,"Alexander Mattison
+MinRB",169.1,0.4
+208,"Noah FantQ
+DenTE",169.1,-0.9
+209,"Marcus Mariota
+TenQB",169.2,-0.1
+210,"Randall Cobb
+DalWR",169.2,-0.8
+211,"Seahawks D/ST
+SeaD/ST",169.2,-0.5
+212,"Rob Gronkowski
+NETE",169.3,-0.3
+213,"Aldrick Rosas
+NYGK",169.3,-1.4
+214,"DaeSean Hamilton
+DenWR",169.3,-0.9
+215,"Raiders D/ST
+OakD/ST",169.4,-0.2
+216,"Packers D/ST
+GBD/ST",169.5,-0.5
+217,"Chris Thompson
+WshRB",169.5,-0.3
+218,"49ers D/ST
+SFD/ST",169.5,-0.4
+219,"Joe Flacco
+DenQB",169.6,0.1
+220,"Eli Manning
+NYGQB",169.6,-0.1
+221,"Dustin Hopkins
+WshK",169.6,0
+222,"Brandon McManus
+DenK",169.6,0
+223,"Hunter Renfrow
+OakWR",169.6,0.1
+224,"Jets D/ST
+NYJD/ST",169.7,-0.7
+225,"Brandon Marshall
+NOWR",169.7,-0.1
+226,"Daniel Jones
+NYGQB",169.7,-0.3
+227,"Chris Boswell
+PitK",169.7,-0.8
+228,"C.J. Spiller
+KCRB",169.7,-0.1
+229,"Nathan Peterman
+OakQB",169.7,-0.3
+230,"Nick Novak
+LACK",169.7,0
+231,"Ted Ginn Jr.
+NOWR",169.8,-0.9
+232,"Andy Dalton
+CinQB",169.8,0.1
+233,"Dallas GoedertQ
+PhiTE",169.8,-0.6
+234,"Demaryius ThomasQ
+NEWR",169.8,0
+235,"Falcons D/ST
+AtlD/ST",169.8,-0.3
+236,"Marshawn LynchQ
+OakRB",169.8,-0.1
+237,"Benjamin WatsonSSPD
+NETE",169.8,-0.2
+238,"Sam Bradford
+AriQB",169.8,-0.1
+239,"Jay Cutler
+FAQB",169.8,-0.1
+240,"Antonio Gates
+LACTE",169.8,-0.1
+241,"Taysom Hill
+NOQB",169.8,0
+242,"Sebastian JanikowskiQ
+SeaK",169.8,-0.1
+243,"Eddy Pineiro
+ChiK",169.8,0
+244,"Giants D/ST
+NYGD/ST",169.8,-0.2
+245,"Dan Bailey
+MinK",169.8,-0.5
+246,"Anthony Fasano
+MiaTE",169.8,-0.1
+247,"Dolphins D/ST
+MiaD/ST",169.8,-0.1
+248,"Stephen Hauschka
+BufK",169.8,-0.1
+249,"Jake Butt
+DenTE",169.9,0
+250,"Brandon Tate
+NOWR",169.9,0

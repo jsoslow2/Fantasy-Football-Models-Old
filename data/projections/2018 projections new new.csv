@@ -1,0 +1,301 @@
+Player,POS,TEAM,POSRANK
+1.Todd Gurley II,RB,LAR,RB1
+2.David Johnson,RB,ARI,RB2
+3.Ezekiel Elliott,RB,DAL,RB3
+4.Alvin Kamara,RB,NO,RB4
+5.Antonio Brown,WR,PIT,WR1
+6.Saquon Barkley,RB,NYG,RB5
+7.Dalvin Cook,RB,MIN,RB6
+8.Melvin Gordon,RB,LAC,RB7
+9.Julio Jones,WR,ATL,WR2
+10.DeAndre Hopkins,WR,HOU,WR3
+11.Odell Beckham Jr.,WR,NYG,WR4
+12.Keenan Allen,WR,LAC,WR5
+13.Michael Thomas,WR,NO,WR6
+14.Christian McCaffrey,RB,CAR,RB8
+15.Kareem Hunt,RB,KC,RB9
+16.Leonard Fournette,RB,JAC,RB10
+17.Joe Mixon,RB,CIN,RB11
+18.Jordan Howard,RB,CHI,RB12
+19.A.J. Green,WR,CIN,WR7
+20.Rob Gronkowski,TE,NE,TE1
+21.Davante Adams,WR,GB,WR8
+22.Tyreek Hill,WR,KC,WR9
+23.Travis Kelce,TE,KC,TE2
+24.Devonta Freeman,RB,ATL,RB13
+25.LeSean McCoy,RB,BUF,RB14
+26.Mike Evans,WR,TB,WR10
+27.Kenyan Drake,RB,MIA,RB15
+28.Larry Fitzgerald,WR,ARI,WR11
+29.T.Y. Hilton,WR,IND,WR12
+30.Adam Thielen,WR,MIN,WR13
+31.Alex Collins,RB,BAL,RB16
+32.Zach Ertz,TE,PHI,TE3
+33.Stefon Diggs,WR,MIN,WR14
+34.Demaryius Thomas,WR,DEN,WR15
+35.Emmanuel Sanders,WR,DEN,WR16
+36.Allen Robinson,WR,CHI,WR17
+37.Amari Cooper,WR,OAK,WR18
+38.Jarvis Landry,WR,CLE,WR19
+39.Golden Tate,WR,DET,WR20
+40.Marvin Jones Jr.,WR,DET,WR21
+41.Brandin Cooks,WR,LAR,WR22
+42.Dion Lewis,RB,TEN,RB17
+43.JuJu Smith-Schuster,WR,PIT,WR23
+44.Josh Gordon,WR,CLE,WR24
+45.Jay Ajayi,RB,PHI,RB18
+46.Lamar Miller,RB,HOU,RB19
+47.Royce Freeman,RB,DEN,RB20
+48.Marshawn Lynch,RB,OAK,RB21
+49.Mark Ingram II,RB,NO,RB22
+50.Rex Burkhead,RB,NE,RB23
+51. Le'Veon Bell,RB,PIT,RB24
+52.Carlos Hyde,RB,CLE,RB25
+53.Robert Woods,WR,LAR,WR25
+54.Chris Hogan,WR,NE,WR26
+55.Michael Crabtree,WR,BAL,WR27
+56.Corey Davis,WR,TEN,WR28
+57.Devin Funchess,WR,CAR,WR29
+58.Aaron Rodgers,QB,GB,QB1
+59.Tom Brady,QB,NE,QB2
+60.Chris Thompson,RB,WAS,RB26
+61.Derrick Henry,RB,TEN,RB27
+62.Chris Carson,RB,SEA,RB28
+63.Peyton Barber,RB,TB,RB29
+64.Jordan Reed,TE,WAS,TE4
+65.Jimmy Graham,TE,GB,TE5
+66.Evan Engram,TE,NYG,TE6
+67.Cooper Kupp,WR,LAR,WR30
+68.Randall Cobb,WR,GB,WR31
+69.Doug Baldwin,WR,SEA,WR32
+70.Marquise Goodwin,WR,SF,WR33
+71.Sammy Watkins,WR,KC,WR34
+72.Nelson Agholor,WR,PHI,WR35
+73.James Conner,RB,PIT,RB30
+74.Duke Johnson Jr.,RB,CLE,RB31
+75.Kyle Rudolph,TE,MIN,TE7
+76.Jamison Crowder,WR,WAS,WR36
+77.Julian Edelman,WR,NE,WR37
+78.Cam Newton,QB,CAR,QB3
+79.Russell Wilson,QB,SEA,QB4
+80.Andrew Luck,QB,IND,QB5
+81.Deshaun Watson,QB,HOU,QB6
+82.Sterling Shepard,WR,NYG,WR38
+83.Pierre Garcon,WR,SF,WR39
+84.Will Fuller V,WR,HOU,WR40
+85.Tevin Coleman,RB,ATL,RB32
+86.Isaiah Crowell,RB,NYJ,RB33
+87.Tarik Cohen,RB,CHI,RB34
+88.Adrian Peterson,RB,WAS,RB35
+89.Matt Breida,RB,SF,RB36
+90.Jack Doyle,TE,IND,TE8
+91.Carson Wentz,QB,PHI,QB7
+92.Kenny Stills,WR,MIA,WR41
+93.Jordy Nelson,WR,OAK,WR42
+94.Kenny Golladay,WR,DET,WR43
+95.Robby Anderson,WR,NYJ,WR44
+96.Alfred Morris,RB,SF,RB37
+97.Jamaal Williams,RB,GB,RB38
+98.Kerryon Johnson,RB,DET,RB39
+99.James White,RB,NE,RB40
+100.Trey Burton,TE,CHI,TE9
+101.Quincy Enunwa,WR,NYJ,WR45
+102.Alshon Jeffery,WR,PHI,WR46
+103.Kelvin Benjamin,WR,BUF,WR47
+104.Tyler Lockett,WR,SEA,WR48
+105.Mohamed Sanu,WR,ATL,WR49
+106.Danny Amendola,WR,MIA,WR50
+107.Chris Godwin,WR,TB,WR51
+108.Geronimo Allison,WR,GB,WR52
+109.Ted Ginn Jr.,WR,NO,WR53
+110.Josh Doctson,WR,WAS,WR54
+111.Allen Hurns,WR,DAL,WR55
+112.Keelan Cole,WR,JAC,WR56
+113.Paul Richardson,WR,WAS,WR57
+114.Ryan Grant,WR,IND,WR58
+115.DeVante Parker,WR,MIA,WR59
+116.Ben Roethlisberger,QB,PIT,QB8
+117.Kirk Cousins,QB,MIN,QB9
+118.George Kittle,TE,SF,TE10
+119.David Njoku,TE,CLE,TE11
+120.Benjamin Watson,TE,NO,TE12
+121.Bilal Powell,RB,NYJ,RB41
+122.Phillip Lindsay,RB,DEN,RB42
+123.Marlon Mack,RB,IND,RB43
+124.Rashaad Penny,RB,SEA,RB44
+125.Sony Michel,RB,NE,RB45
+126.Patrick Mahomes,QB,KC,QB10
+127.Matthew Stafford,QB,DET,QB11
+128.Drew Brees,QB,NO,QB12
+129.John Ross,WR,CIN,WR60
+130.DeSean Jackson,WR,TB,WR61
+131.John Brown,WR,BAL,WR62
+132.Courtland Sutton,WR,DEN,WR63
+133.Philip Rivers,QB,LAC,QB13
+134.Alex Smith,QB,WAS,QB14
+135.Matt Ryan,QB,ATL,QB15
+136.Jimmy Garoppolo,QB,SF,QB16
+137.Donte Moncrief,WR,JAC,WR64
+138.Mike Williams,WR,LAC,WR65
+139.Michael Gallup,WR,DAL,WR66
+140.Rishard Matthews,WR,TEN,WR67
+141.Mike Wallace,WR,PHI,WR68
+142.Theo Riddick,RB,DET,RB46
+143.Ty Montgomery,RB,GB,RB47
+144.Javorius Allen,RB,BAL,RB48
+145.Austin Seferian-Jenkins,TE,JAC,TE13
+146.Tyler Eifert,TE,CIN,TE14
+147.Aaron Jones,RB,GB,RB49
+148.Darren Sproles,RB,PHI,RB50
+149.Austin Ekeler,RB,LAC,RB51
+150.Tyrod Taylor,QB,CLE,QB17
+151.Jared Goff,QB,LAR,QB18
+152.Mitchell Trubisky,QB,CHI,QB19
+153. Jaguars D/ST,DST,JAC,DST1
+154.Jalen Richard,RB,OAK,RB52
+155.Nyheim Hines,RB,IND,RB53
+156.Jordan Wilkins,RB,IND,RB54
+157.T.J. Yeldon,RB,JAC,RB55
+158.Dede Westbrook,WR,JAC,WR69
+159.Cole Beasley,WR,DAL,WR70
+160.Tyler Boyd,WR,CIN,WR71
+161.Jared Cook,TE,OAK,TE15
+162.Anthony Miller,WR,CHI,WR72
+163.Dak Prescott,QB,DAL,QB20
+164.Giovani Bernard,RB,CIN,RB56
+165.Latavius Murray,RB,MIN,RB57
+166.Taylor Gabriel,WR,CHI,WR73
+167.Calvin Ridley,WR,ATL,WR74
+168.O.J. Howard,TE,TB,TE16
+169.Ricky Seals-Jones,TE,ARI,TE17
+170. Eagles D/ST,DST,PHI,DST2
+171. Rams D/ST,DST,LAR,DST3
+172. Vikings D/ST,DST,MIN,DST4
+173. Ravens D/ST,DST,BAL,DST5
+174. Texans D/ST,DST,HOU,DST6
+175.Greg Zuerlein,K,LAR,K1
+176.Stephen Gostkowski,K,NE,K2
+177.Justin Tucker,K,BAL,K3
+178. Patriots D/ST,DST,NE,DST7
+179. Chargers D/ST,DST,LAC,DST8
+180. Broncos D/ST,DST,DEN,DST9
+181. Saints D/ST,DST,NO,DST10
+182. Titans D/ST,DST,TEN,DST11
+183. Bears D/ST,DST,CHI,DST12
+184.Matt Bryant,K,ATL,K4
+185.Wil Lutz,K,NO,K5
+186.Chris Boswell,K,PIT,K6
+187.Robbie Gould,K,SF,K7
+188.Jake Elliott,K,PHI,K8
+189.Matt Prater,K,DET,K9
+190.Harrison Butker,K,KC,K10
+191.Adam Vinatieri,K,IND,K11
+192.Graham Gano,K,CAR,K12
+193.Ronald JonesII,RB,TB,RB58
+194.Doug Martin,RB,OAK,RB59
+195.Corey Clement,RB,PHI,RB60
+196.Vance McDonald,TE,PIT,TE18
+197.Austin Hooper,TE,ATL,TE19
+198.Antonio Gates,TE,LAC,TE20
+199.Devontae Booker,RB,DEN,RB61
+200.C.J. Anderson,RB,CAR,RB62
+201.Chase Edmonds,RB,ARI,RB63
+202.LeGarrette Blount,RB,DET,RB64
+203.Nick Chubb,RB,CLE,RB65
+204.Chris Ivory,RB,BUF,RB66
+205.Marcus Murphy,RB,BUF,RB67
+206.Frank Gore,RB,MIA,RB68
+207.Alfred Blue,RB,HOU,RB69
+208.D'Onta Foreman,RB,HOU,RB70
+209.Spencer Ware,RB,KC,RB71
+210.Charles Clay,TE,BUF,TE21
+211.Cameron Brate,TE,TB,TE22
+212.Marcus Mariota,QB,TEN,QB21
+213. Willie Snead,WR,BAL,WR75
+214.Tyrell Williams,WR,LAC,WR76
+215.Brandon Marshall,WR,SEA,WR77
+216.Phillip Dorsett,WR,NE,WR78
+217.Tajae Sharpe,WR,TEN,WR79
+218.DJ Moore,WR,CAR,WR80
+219.Andy Dalton,QB,CIN,QB22
+220.Ryan Tannehill,QB,MIA,QB23
+221. Panthers D/ST,DST,CAR,DST13
+222. Redskins D/ST,DST,WAS,DST14
+223.Ryan Succop,K,TEN,K13
+224.Daniel Carlson,K,MIN,K14
+225.Dante Pettis,WR,SF,WR81
+226.James Washington,WR,PIT,WR82
+227.Christian Kirk,WR,ARI,WR83
+228.Albert Wilson,WR,MIA,WR84
+229.Chad Williams,WR,ARI,WR85
+230.Austin Carr,WR,NO,WR86
+231.Travis Benjamin,WR,LAC,WR87
+232. D.J. Chark,WR,JAC,WR88
+233.Tre'Quan Smith,WR,NO,WR89
+234.Cordarrelle Patterson,WR,NE,WR90
+235.Jacquizz Rodgers,RB,TB,RB72
+236.Kyle Juszczyk,RB,SF,RB73
+237.Wayne Gallman,RB,NYG,RB74
+238.Elijah McGuire,RB,NYJ,RB75
+239.Jonathan Stewart,RB,NYG,RB76
+240.Rod Smith,RB,DAL,RB77
+241.Damien Williams,RB,KC,RB78
+242.John Kelly,RB,LAR,RB79
+243.Case Keenum,QB,DEN,QB24
+244.Eli Manning,QB,NYG,QB25
+245.Derek Carr,QB,OAK,QB26
+246.Eric Ebron,TE,IND,TE23
+247.Ryan Griffin,TE,HOU,TE24
+248.Jonnu Smith,TE,TEN,TE25
+249.Ian Thomas,TE,CAR,TE26
+250.Corey Grant,RB,JAC,RB80
+251. Dez Bryant,WR,FA,WR91
+252.Marquez Valdes-Scantling,WR,GB,WR92
+253. Cardinals D/ST,DST,ARI,DST15
+254. Falcons D/ST,DST,ATL,DST16
+255.Mason Crosby,K,GB,K15
+256.Josh Lambo,K,JAC,K16
+257.Will Dissly,TE,SEA,TE27
+258.Hayden Hurst,TE,BAL,TE28
+259.Greg Olsen,TE,CAR,TE29
+260.Justin Hunter,WR,PIT,WR93
+261.Deonte Thompson,WR,DAL,WR94
+262.Adam Humphries,WR,TB,WR95
+263.Zay Jones,WR,BUF,WR96
+264.T.J. Logan,RB,ARI,RB81
+265.C.J. Prosise,RB,SEA,RB82
+266.Blake Bortles,QB,JAC,QB27
+267.Joe Flacco,QB,BAL,QB28
+268.Sam Darnold,QB,NYJ,QB29
+269.Jameis Winston,QB,TB,QB30
+270.Sam Bradford,QB,ARI,QB31
+271.Jermaine Kearse,WR,NYJ,WR97
+272.Jeremy Kerley,WR,BUF,WR98
+273.Laquon Treadwell,WR,MIN,WR99
+274.Trent Taylor,WR,SF,WR100
+275.Torrey Smith,WR,CAR,WR101
+276.Robert Turbin,RB,IND,RB83
+277.Ito Smith,RB,ATL,RB84
+278.Kenneth Dixon,RB,BAL,RB85
+279.Christine Michael,RB,IND,RB86
+280.Rob Kelley,RB,WAS,RB87
+281.Jaylen Samuels,RB,PIT,RB88
+282.Malcolm Brown,RB,LAR,RB89
+283.Trenton Cannon,RB,NYJ,RB90
+284.Chester Rogers,WR,IND,WR102
+285. Cowboys D/ST,DST,DAL,DST17
+286. Packers D/ST,DST,GB,DST18
+287.Dustin Hopkins,K,WAS,K17
+288.Chandler Catanzaro,K,TB,K18
+289.Geoff Swaim,TE,DAL,TE30
+290.Mike Gesicki,TE,MIA,TE31
+291.Vernon Davis,TE,WAS,TE32
+292.Luke Willson,TE,DET,TE33
+293.Dallas Goedert,TE,PHI,TE34
+294.Seth Roberts,WR,OAK,WR103
+295.Jarius Wright,WR,CAR,WR104
+296.Josh Allen,QB,BUF,QB32
+297. Lions D/ST,DST,DET,DST19
+298. Bengals D/ST,DST,CIN,DST20
+299. Chiefs D/ST,DST,KC,DST21
+300. Seahawks D/ST,DST,SEA,DST22
