@@ -20,7 +20,7 @@ If you're going to be using this live in your draft
 ```{r}
 numberOfTeams <- 10
 
-isFlex <- FALSE
+isFlex <- TRUE
 
 ppr <- 1
 rushYards <- .1
