@@ -20,7 +20,7 @@ If you're going to be using this live in your draft
 ```{r}
 numberOfTeams <- 10
 
-isFlex <- TRUE
+isFlex <- FALSE
 
 ppr <- 1
 rushYards <- .1
@@ -28,7 +28,7 @@ receivingYards <- .1
 rushTD <- 6
 receivingTD <- 6
 passYards <- .04
-passTD <- 3
+passTD <- 4
 fmb <- -2
 int <- -2
 ```
@@ -212,11 +212,13 @@ for (i in 1:length(splittingStrings)) {
   positions <- c(positions, position)
 }
 
-espnADP[espnADP$position == "ST",]$Team <- str_sub(espnADP[espnADP$position == "ST",]$Team, 1, -3)
 
 espnADP$Name <- names
 espnADP$Team <- teams
 espnADP$position <- positions
+
+espnADP[espnADP$position == "ST",]$Team <- str_sub(espnADP[espnADP$position == "ST",]$Team, 1, -3)
+
 
 #Clean injuries out of name
 espnADP$isQuestionable <- 0
@@ -723,7 +725,6 @@ depthChartsAll <- rbind(depthChart2019, depthChart2018, depthChart2017, depthCha
 ```
 
 
-#start here if changing the league dimensions
 Clean the fantasy table
 ```{r}
 #Clean fantasy table
@@ -753,6 +754,8 @@ colnames(fantasy)
 fantasy <- fantasy %>% filter(FantPos != "FantPos")
 ```
 
+
+#Start here if changing league dimensions
 Join projections w QBR
 ```{r}
 #some team names r diff
@@ -789,7 +792,6 @@ pastProjections$avgQBR[is.na(pastProjections$avgQBR)] <- quantile(pastProjection
 pastProjections$passPlay[is.na(pastProjections$passPlay)] <- quantile(pastProjections$passPlay, na.rm = TRUE)[2]
 ```
 
-
 Join projections with depth charts
 ```{r}
 pastProjections$Name[startsWith(pastProjections$Name, " ")] <- str_sub(pastProjections$Name[startsWith(pastProjections$Name, " ")], 2, -1)
@@ -807,7 +809,6 @@ pastProjections$depthChart[pastProjections$Name == " Le'Veon Bell"] <- "RB1"
 pastProjections$depthChart[is.na(pastProjections$depthChart)] <- "FA"
 
 ```
-
 
 
 Join the tables and fix names (KILL ME)
@@ -1016,6 +1017,7 @@ combined$actualPoints
 
 join team ELO from last season
 ```{r}
+combined$elo1_post.x
 #Elo Cleaning
 eloSince2006 <- nflELO[nflELO$season >=2006,]
 eloSince2006$team1[eloSince2006$team1 == "JAX"] <- "JAC"
@@ -1833,7 +1835,48 @@ View(secondDataframe %>%
 
 
 
+```{r}
+View(secondDataframe)
+```
 
+```{r}
+ggplot(pointsPlusADP, aes(x=ADP, y=PAR, color = position.x)) +
+  geom_point() +
+  geom_text(label = pointsPlusADP$Name, size = 2)  +
+  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
+```
+
+sleepers / value picks
+```{r}
+rbs <- pointsPlusADP %>% filter(position.x == "RB")
+ggplot(rbs, aes(x=ADP, y=PAR)) +
+  geom_point() +
+  geom_text(label = rbs$Name, size = 2)  +
+  geom_smooth() +
+  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
+
+wrs <- pointsPlusADP %>% filter(position.x == "WR")
+ggplot(wrs, aes(x=ADP, y=PAR)) +
+  geom_point() +
+  geom_text(label = wrs$Name, size = 2)  +
+  geom_smooth() +
+  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
+
+
+TEs <- pointsPlusADP %>% filter(position.x == "TE")
+ggplot(TEs, aes(x=ADP, y=PAR)) +
+  geom_point() +
+  geom_text(label = TEs$Name, size = 2)  +
+  geom_smooth() +
+  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
+
+QBs <- pointsPlusADP %>% filter(position.x == "QB")
+ggplot(QBs, aes(x=ADP, y=PAR)) +
+  geom_point() +
+  geom_text(label = QBs$Name, size = 2)  +
+  geom_smooth() +
+  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
+```
 
 
 
