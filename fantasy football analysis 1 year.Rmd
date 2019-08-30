@@ -91,50 +91,68 @@ depthChart2010 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-F
 #Scrape Player Stats since 2006
 ...takes around 3 minutes
 ```{r}
-passing <- data.frame()
-rushing <- data.frame()
-receiving <- data.frame()
-fantasyAll <- data.frame()
+# passing <- data.frame()
+# rushing <- data.frame()
+# receiving <- data.frame()
+# fantasyAll <- data.frame()
+# 
+# 
+# read_html("https://www.pro-football-reference.com/years/2006/passing.htm")
+# 
+# i = 2006
+# for (i in 2006:2018) {
+#   passingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/passing.htm")
+#   rushingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/rushing.htm")
+#   receivingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/receiving.htm")
+#   fantasyurl <- paste0("https://www.pro-football-reference.com/years/", i, "/fantasy.htm")
+# 
+#   passingYear <- read_html(passingurl) %>%
+#     html_nodes("table") %>%
+#     html_table()
+# 
+#   rushingYear <- read_html(rushingurl) %>%
+#     html_nodes("table") %>%
+#     html_table()
+# 
+#   receivingYear <- read_html(receivingurl) %>%
+#     html_nodes("table") %>%
+#     html_table()
+# 
+#   fantasyYear <- read_html(fantasyurl) %>%
+#     html_nodes("table") %>%
+#     html_table()
+# 
+#   passingYear <- passingYear[[1]]
+#   passingYear$year <- i
+# 
+#   rushingYear <- rushingYear[[1]]
+#   rushingYear$year <- i
+# 
+#   receivingYear <- receivingYear[[1]]
+#   receivingYear$year <- i
+# 
+#   fantasyYear <- fantasyYear[[1]]
+#   fantasyYear$year <- i
+# 
+#   passing <- rbind(passing, passingYear)
+#   rushing <- rbind(rushing, rushingYear)
+#   receiving <- rbind(receiving, receivingYear)
+#   fantasyAll <- rbind(fantasyAll, fantasyYear)
+# }
+# 
+# getwd()
+# setwd("/Users/jacksoslow/Downloads/fantasy football/data/past player data")
+# 
+# write.csv(passing, file = "passing.csv")
+# write.csv(rushing, file = "rushing.csv")
+# write.csv(receiving, file = "receiving.csv")
+# write.csv(fantasyAll, file = "fantasyAll.csv")
+# 
 
-for (i in 2006:2018) {
-  passingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/passing.htm")
-  rushingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/rushing.htm")
-  receivingurl <- paste0("https://www.pro-football-reference.com/years/", i, "/receiving.htm")
-  fantasyurl <- paste0("https://www.pro-football-reference.com/years/", i, "/fantasy.htm")
-  
-  passingYear <- read_html(passingurl) %>% 
-    html_nodes("table") %>% 
-    html_table() 
-  
-  rushingYear <- read_html(rushingurl) %>% 
-    html_nodes("table") %>% 
-    html_table() 
-  
-  receivingYear <- read_html(receivingurl) %>% 
-    html_nodes("table") %>% 
-    html_table() 
-  
-  fantasyYear <- read_html(fantasyurl) %>% 
-    html_nodes("table") %>% 
-    html_table() 
-  
-  passingYear <- passingYear[[1]]
-  passingYear$year <- i
-  
-  rushingYear <- rushingYear[[1]]
-  rushingYear$year <- i
-  
-  receivingYear <- receivingYear[[1]]
-  receivingYear$year <- i
-  
-  fantasyYear <- fantasyYear[[1]]
-  fantasyYear$year <- i
-  
-  passing <- rbind(passing, passingYear)
-  rushing <- rbind(rushing, rushingYear)
-  receiving <- rbind(receiving, receivingYear)
-  fantasyAll <- rbind(fantasyAll, fantasyYear)
-}
+passing <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/past%20player%20data/passing.csv")
+rushing <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/past%20player%20data/rushing.csv")
+receiving <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/past%20player%20data/receiving.csv")
+fantasyAll <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/past%20player%20data/fantasyAll.csv")
 ```
 
 
@@ -731,7 +749,7 @@ Clean the fantasy table
 fantasy <- fantasyAll
 
 colnames(fantasy) <- as.character(unlist(fantasy[1,]))
-fantasy <- fantasy[-1,]
+fantasy <- fantasy[-1,-1]
 colnames(fantasy)[9] <- "passAtt"
 colnames(fantasy)[10] <- "passYds"
 colnames(fantasy)[11] <- "passTDs"
@@ -742,6 +760,8 @@ colnames(fantasy)[19] <- "recYds"
 colnames(fantasy)[21] <- "recTDs"
 colnames(fantasy)[24] <- "totalTDs"
 colnames(fantasy)[34] <- "year"
+
+#add a year so you attach last years stats to this years projections
 fantasy$year <- fantasy$year + 1
 
 endWithPlus <- grepl("^.+(\\+)$",fantasy$Player)
@@ -749,7 +769,6 @@ fantasy$Player[endWithPlus] <- str_sub(fantasy$Player[endWithPlus], 1, -2)
 endWithStar <- grepl("^.+(\\*)$",fantasy$Player)
 fantasy$Player[endWithStar] <- str_sub(fantasy$Player[endWithStar], 1, -2)
 
-colnames(fantasy)
 
 fantasy <- fantasy %>% filter(FantPos != "FantPos")
 ```
