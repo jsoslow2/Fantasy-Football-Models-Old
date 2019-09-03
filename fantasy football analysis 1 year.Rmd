@@ -22,7 +22,7 @@ numberOfTeams <- 10
 
 isFlex <- TRUE
 
-ppr <- 1
+ppr <- .5
 rushYards <- .1
 receivingYards <- .1
 rushTD <- 6
@@ -33,22 +33,24 @@ fmb <- -2
 int <- -2
 ```
 
-installation (only run if u haven't installed these packages yet)
-```{r}
-install.packages("tidyverse")
-install.packages("rvest")
-install.packages("stringr")
-install.packages("stringdist")
-install.packages("randomForest")
-install.packages("Matrix")
-install.packages("lubridate")
-install.packages("glmnet")
-install.packages("caret")
-install.packages("pls")
-```
+<!-- installation (only run if u haven't installed these packages yet) -->
+<!-- ```{r} -->
+<!-- install.packages("tidyverse") -->
+<!-- install.packages("rvest") -->
+<!-- install.packages("stringr") -->
+<!-- install.packages("stringdist") -->
+<!-- install.packages("randomForest") -->
+<!-- install.packages("Matrix") -->
+<!-- install.packages("lubridate") -->
+<!-- install.packages("glmnet") -->
+<!-- install.packages("caret") -->
+<!-- install.packages("pls") -->
+<!-- ``` -->
 
 load packages
 ```{r}
+library(shiny)
+library(DT)
 library(tidyverse)
 library(rvest)
 library(stringr)
@@ -842,6 +844,26 @@ pastProjections$depthChart[is.na(pastProjections$depthChart)] <- "FA"
 
 ```
 
+Get the response variable (Next Years Points)
+```{r}
+i = 9
+fantasy$actualPoints <- 0
+for (i in 1:nrow(fantasy)) {
+  row <- fantasy[i,]
+  year <- as.numeric(row$year)
+  name <- row$Player
+  nextYear <- year + 1
+  
+  nextYearsRow <- fantasy %>% filter(year == nextYear,
+                          Player == name) %>% .[1,]
+  
+  
+  nextYearsPoints <- ifelse(is.na(nextYearsRow$PPR), 0, nextYearsRow$PPR)
+  row$actualPoints <- nextYearsPoints
+  fantasy[i, ] <- row
+}
+```
+
 
 Join the tables and fix names (KILL ME)
 ```{r}
@@ -885,8 +907,12 @@ for (i in 1:nrow(pastProjections)) {
     mutate(closestName = closestMatch(Name, fantasyFiltered$Player))
   pastProjections$closestName[i] <- row$closestName
 }
+pastProjections$closestName[pastProjections$position %in% c("ST", "K")] <- "noName"
+
+pastProjections$sameName <- ifelse(pastProjections$Name == pastProjections$closestName, 1, 0)
 
 #backwards Match o'clock
+#find the most similar name in fantasy to ESPN names
 for (i in 1:nrow(fantasy)) {
   row <- fantasy[i,]
   theYear <- row$year
@@ -896,10 +922,49 @@ for (i in 1:nrow(fantasy)) {
     mutate(closestName = closestMatch(Player, projectionsFiltered$Name))
   fantasy$closestName[i] <- row$closestName
 }
+fantasy$sameName <- ifelse(fantasy$closestName == fantasy$Player, 1, 0)
 
+#now this is where it gets weird...
+#lord please save my soul as I do this join
 combined <- pastProjections %>% left_join(fantasy, by = c("closestName" = "Player",
                                                           "Name" = "closestName",
                                                   "year" = "year"))
+
+
+#all rookies who were accidentally joined to rows
+badJoins <- (combined$Name == "Ryan Matthews" & combined$year == 2010) |
+  (combined$Name == "Jahvid Best" & combined$year == 2010) |
+  (combined$Name == "Anthony Dixon" & combined$year == 2010) |
+  (combined$Name == "Ryan Williams" & combined$year == 2012) |
+  (combined$Name == "Mohamed Sanu" & combined$year == 2012) |
+  (combined$Name == "Montee Ball" & combined$year == 2013) |
+  (combined$Name == "Robert Woods" & combined$year == 2013) |
+  (combined$Name == "Mike Evans" & combined$year == 2014) |
+  (combined$Name == "Jeremy Hill" & combined$year == 2014) |
+  (combined$Name == "Kelvin Benjamin" & combined$year == 2014) |
+  (combined$Name == "Eric Ebron" & combined$year == 2014) |
+  (combined$Name == "Tevin Coleman" & combined$year == 2015) |
+  (combined$Name == "Dion Lewis" & combined$year == 2015) |
+  (combined$Name == "Devin Smith" & combined$year == 2015) |
+  (combined$Name == "Maxx Williams" & combined$year == 2015) |
+  (combined$Name == "Will Fuller" & combined$year == 2016) |
+  (combined$Name == "Kevin White" & combined$year == 2016) |
+  (combined$Name == "Tyler Boyd" & combined$year == 2016) |
+  (combined$Name == "Kareem Hunt" & combined$year == 2017) |
+  (combined$Name == "Zay Jones" & combined$year == 2017) |
+  (combined$Name == "Aaron Jones" & combined$year == 2017) |
+  (combined$Name == "Wayne Gallman" & combined$year == 2017) |
+  (combined$Name == "Calvin Ridley" & combined$year == 2018) |
+  (combined$Name == "DJ Moore" & combined$year == 2018) |
+  (combined$Name == "Dante Pettis" & combined$year == 2018) |
+  (combined$Name == "Austin Carr" & combined$year == 2018) |
+  (combined$Name == "Tre'Quan Smith" & combined$year == 2018) |
+  (combined$Name == "Ian Thomas" & combined$year == 2018) |
+  (combined$Name == "Ito Smith" & combined$year == 2018) |
+  (combined$Name == "Josh Allen" & combined$year == 2018)
+
+combined[badJoins, 17:(ncol(combined)-1)] <- NA
+combined <- combined %>% select(-sameName.x, -sameName.y)
 
 
 #filtering out all you generic named FUCKS
@@ -920,62 +985,6 @@ steveSmithFilter <- !(combined$Name == "Steve Smith")
 combined.1 <- combined %>% 
   filter(davidJohnsonFilter & chrisThompsonFilter & adrianPetersonFilter & alexSmithFilter & chrisGivensFilter & mikeWilliamsFilter & mikeWilliamsFilter2 & mikeWilliamsFilter3 & zachMillerFilter & zachMillerFilter2 & steveSmithFilter)
 
-# #add two years back data
-# fantasyCopy <- fantasy
-# fantasyCopy$year <- fantasy$year+1
-# 
-# unique(fantasy$year)
-# 
-# 
-# 
-# 
-# combinedCopy <- combined %>% left_join(fantasyCopy, by = c("closestName" = "Player",
-#                                                            "Name" = "closestName",
-#                                            "year" = "year"))
-
-
-# 
-# #Some Players have the same stupid generic name...
-# combined %>% 
-#   group_by(Name) %>% 
-#   mutate(unique_years = n_distinct(year)) %>% 
-#   ungroup() %>% 
-#   group_by(Name, unique_years) %>% 
-#   summarise(rows = dplyr::n()) %>% 
-#   mutate(difference = rows - unique_years) %>% 
-#   filter(difference != 0)
-# 
-# combinedCopy %>% filter(Name == "David Johnson")
-# combinedCopy %>% filter(Name == "Chris Thompson")
-# combinedCopy %>% filter(Name == "Adrian Peterson")
-# combinedCopy %>% filter(Name == "Alex Smith")
-# combinedCopy %>% filter(Name == "Chris Givens")
-# combinedCopy %>% filter(Name == "Mike Williams")
-# combinedCopy %>% filter(Name == "Zach Miller")
-# combinedCopy %>% filter(Name == "Steve Smith")
-# 
-# 
-# 
-# #filtering out all you generic named FUCKS
-# davidJohnsonFilter <- !(combinedCopy$Name == "David Johnson" & (combinedCopy$Age.x > 26 | combinedCopy$Tm.y %in% c("SDG", "PIT")))
-# chrisThompsonFilter <- !(combinedCopy$Name == "Chris Thompson" & combinedCopy$FantPos.x == "WR")
-# adrianPetersonFilter <- !(combinedCopy$Name == "Adrian Peterson" & combinedCopy$Tm.x == "CHI")
-# alexSmithFilter <- !(combinedCopy$Name == "Alex Smith" & (combinedCopy$FantPos.x != "QB" | combinedCopy$Tm.y %in% c("WAS", "CLE", "TAM")))
-# chrisGivensFilter <- !(combinedCopy$Name == "Chris Givens")
-# mikeWilliamsFilter <- !(combinedCopy$Name == "Mike Williams" & combinedCopy$team == "SEA")
-# mikeWilliamsFilter2 <- !(combinedCopy$Name == "Mike Williams" & combinedCopy$Tm.x == "SEA")
-# mikeWilliamsFilter3 <- !(combinedCopy$Name == "Mike Williams" & combinedCopy$Tm.y == "SEA")
-# zachMillerFilter <- !(combinedCopy$Name == "Zach Miller" & combinedCopy$Tm.x == "JAX")
-# zachMillerFilter2 <- !(combinedCopy$Name == "Zach Miller" & combinedCopy$Tm.y == "JAX")
-# #fuck steve smith i dont have time for this
-# steveSmithFilter <- !(combinedCopy$Name == "Steve Smith")
-# 
-# 
-# 
-# 
-# #filter
-# combined.1 <- combinedCopy %>% 
-#   filter(davidJohnsonFilter & chrisThompsonFilter & adrianPetersonFilter & alexSmithFilter & chrisGivensFilter & mikeWilliamsFilter & mikeWilliamsFilter2 & mikeWilliamsFilter3 & zachMillerFilter & zachMillerFilter2 & steveSmithFilter)
 
 combined <- combined.1[!(duplicated(combined.1)),]
 
@@ -1080,6 +1089,7 @@ modelData <- combined
 
 modelData$Rk <- as.numeric(modelData$Rk)
 modelData$rank <- as.numeric(modelData$rank)
+modelData$isRookie <- ifelse(is.na(modelData$Rk), 1, 0)
 modelData <- modelData %>% select(Name, position, depthChart, everything())
 
 modelData[,6:ncol(modelData)] <- sapply(modelData[6:ncol(modelData)], as.numeric)
@@ -1091,7 +1101,6 @@ modelData <- modelData %>%
          twoPP = `2PP`) %>% 
   select(actualPoints, everything())
 
-modelData$isRookie <- ifelse(is.na(modelData$Rk), 1, 0)
 
 modelData <- modelData %>% 
   mutate(passRate = passAtt / GS,
@@ -1280,36 +1289,12 @@ recentFantasy$newName <- newName
 
 #wrong matches
 espnProjections$backwardsMatch[espnProjections$Name %in% c("Le'Veon Bell", "Josh Jacobs")] <- "" 
+espnProjections$backwardsMatch[espnProjections$position %in% c("K", "ST")] <- ""
 
 x <- espnProjections %>% select(Rank, Name, Team, position, backwardsMatch) %>% 
   mutate(yearsFromPresent = 0,
          year = 2019) %>% left_join(recentFantasy, by = c("backwardsMatch" = "Player",
                                                     "Name" = "newName")) 
-
-
-
-
-
-# twoYearsAgo <- fantasy %>% filter(year == 2018)
-# newName <- ""
-# backwardsMatch <- ""
-# for (i in twoYearsAgo$Player) {
-#   newName <- c(newName, closestMatch(i, x$Name))
-# }
-# for (i in x$Name) {
-#   backwardsMatch <- c(backwardsMatch, closestMatch(i, twoYearsAgo$Player))
-# }
-# 
-# newName <- newName[-1]
-# backwardsMatch <- backwardsMatch[-1]
-# 
-# x$backwardsMatch <- backwardsMatch
-# twoYearsAgo$newName <- newName
-# 
-# twoYearsAgo$year <- 2019
-# 
-# x <- x %>% left_join(twoYearsAgo, by = c("backwardsMatch" = "Player",
-#                                     "Name" = "newName"))
 
 
 x <- x[!duplicated(x),]
@@ -1344,8 +1329,8 @@ thisYearsProjections$depthChart[is.na(thisYearsProjections$depthChart)] <- "FA"
 thisYearsProjections$Rk <- as.numeric(thisYearsProjections$Rk)
 thisYearsProjections$rank <- as.numeric(thisYearsProjections$Rank)
 
+thisYearsProjections$isRookie <- ifelse(is.na(thisYearsProjections$Rk), 1, 0)
 
-thisYearsProjections$year
 thisYearsProjections <- thisYearsProjections %>% 
   select(-c(backwardsMatch, year.y, year.y.y, year.x, year.x.x, FantPos, Tm, Team, closestName))
 
@@ -1361,7 +1346,6 @@ thisYearsProjections <- thisYearsProjections %>%
          twoPM = `2PM`,
          twoPP = `2PP`,) 
 
-thisYearsProjections$isRookie <- ifelse(is.na(thisYearsProjections$Rk), 1, 0)
 
 
 thisYearsProjections <- thisYearsProjections %>% 
@@ -1647,13 +1631,174 @@ roundUp <- function(x,to=numberOfTeams)
 
 #Who's been drafted by everyone?
 ```{r}
-draftedOverall <- c(
+draftedOverall <- c("Saquon Barkley",
+                    "Christian McCaffrey",
+                    "Alvin Kamara",
+                    "Ezekiel Elliott",
+                    "DeAndre Hopkins",
+                    "David Johnson",
+                    "Davante Adams",
+                    "Le'Veon Bell",
+                    "Michael Thomas",
+                    "Todd Gurley II",
+                    "JuJu Smith-Schuster",
+                    "Nick Chubb",
+                    "Julio Jones",
+                    "Tyreek Hill",
+                    "Odell Beckham Jr.",
+                    "James Conner",
+                    "Antonio Brown",
+                    "Mike Evans",
+                    "Joe Mixon",
+                    "Keenan Allen",
+                    "Travis Kelce",
+                    "Dalvin Cook",
+                    "Devonta Freeman",
+                    "Derrick Henry",
+                    "Josh Jacobs",
+                    "Chris Carson",
+                    "Leonard Fournette",
+                    "Kerryon Johnson",
+                    "Aaron Jones",
+                    "George Kittle",
+                    "Patrick Mahomes",
+                    "Adam Thielen",
+                    "Sony Michel",
+                    "Melvin Gordon",
+                    "Julian Edelman",
+                    "Amari Cooper",
+                    "Zach Ertz",
+                    "Brandin Cooks",
+                    "Robert Woods",
+                    "Stefon Diggs",
+                    "Cooper Kupp",
+                    "T.Y. Hilton",
+                    "David Montgomery",
+                    "Josh Gordon",
+                    "Kenny Golladay",
+                    "Mark Ingram II",
+                    "Alshon Jeffery",
+                    "Chris Godwin",
+                    "Tyler Boyd",
+                    "Tyler Lockett",
+                    "James White",
+                    "Phillip Lindsay",
+                    "Marlon Mack",
+                    "Mike Williams",
+                    "DJ Moore",
+                    "Duke Johnson Jr.",
+                    "Allen Robinson",
+                    "Jared Cook",
+                    "Hunter Henry",
+                    "Miles Sanders",
+                    "Deshaun Watson",
+                    "Carson Wentz",
+                    "Robby Anderson",
+                    "Matt Ryan",
+                    "Evan Engram",
+                    "O.J. Howard",
+                    "Aaron Rodgers",
+                    "A.J. Green",
+                    "Cam Newton",
+                    "Tarik Cohen",
+                    "Bears D/ST",
+                    "Damien Williams",
+                    "Tevin Coleman",
+                    "Derrius Guice",
+                    "Dede Westbrook",
+                    "Jarvis Landry",
+                    "Austin Ekeler",
+                    "Baker Mayfield",
+                    "Devin Singletary",
+                    "Calvin Ridley",
+                    "LeSean McCoy",
+                    "Emmanuel Sanders",
+                    "Sammy Watkins",
+                    "Kenyan Drake",
+                    "James Washington",
+                    "Latavius Murray",
+                    "Vance McDonald",
+                    "Marvin Jones Jr.",
+                    "David Njoku",
+                    "Ben Roethlisberger",
+                    "Sterling Shepard",
+                    "Christian Kirk",
+                    "Curtis Samuel",
+                    "Corey Davis",
+                    "Dak Prescott",
+                    "Larry Fitzgerald",
+                    "Jordan Howard",
+                    "Matt Breida",
+                    "DeSean Jackson",
+                    "Marquez Valdes-Scantling",
+                    "Peyton Barber",
+                    "Drew Brees",
+                    "Tom Brady",
+                    "Keke Coutee",
+                    "Kyler Murray",
+                    "Darrell Henderson",
+                    "Royce Freeman",
+                    "Lamar Jackson",
+                    "Rashaad Penny",
+                    "Jared Goff",
+                    "Will Fuller V",
+                    "Jaguars D/ST",
+                    "Kalen Ballage",
+                    "Rams D/ST",
+                    "Tyrell Williams",
+                    "Russell Wilson",
+                    "Michael Gallup",
+                    "Bills D/ST",
+                    "Eagles D/ST",
+                    "Saints D/ST",
+                    "Justin Tucker",
+                    "Harrison Butker",
+                    "Donte Moncrief",
+                    "Vikings D/ST",
+                    "Tony Pollard",
+                    "Jameis Winston",
+                    "Jamison Crowder",
+                    "Broncos D/ST",
+                    "Stephen Gostkowski",
+                    "Dante Pettis",
+                    "Darwin Thompson",
+                    "Nyheim Hines",
+                    "Delanie Walker",
+                    "Courtland Sutton",
+                    "DK Metcalf",
+                    "Charger D/ST",
+                    "Greg Zuerlein",
+                    "Ka'imi Fairbairn",
+                    "Austin Hooper",
+                    "Philip Rivers",
+                    "Kareem Hunt",
+                    "Geronimo Allison",
+                    "Adam Humphries",
+                    "Derek Carr",
+                    "Mark Andrews",
+                    "Will Lutz",
+                    "Jalen Richard",
+                    "Jake Elliott",
+                    "Mohamed Sanu"
                     )
 
 
 
 
-yourTeam <- c(
+yourTeam <- c("Todd Gurley II",
+              "JuJu Smith-Schuster",
+              "George Kittle",
+              "Patrick Mahomes",
+              "Tyler Lockett",
+              "James White",
+              "Bears D/ST",
+              "Tarik Cohen",
+              "Sterling Shepard",
+              "Ben Roethlisberger",
+              "Jared Goff",
+              "Will Fuller V",
+              "Dante Pettis",
+              "Darwin Thompson"
               )
 
 ```
@@ -1866,55 +2011,6 @@ View(secondDataframe %>%
 ```
 
 
-
-```{r}
-View(secondDataframe)
-```
-
-```{r}
-ggplot(pointsPlusADP, aes(x=ADP, y=PAR, color = position.x)) +
-  geom_point() +
-  geom_text(label = pointsPlusADP$Name, size = 2)  +
-  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
-```
-
-sleepers / value picks
-```{r}
-rbs <- pointsPlusADP %>% filter(position.x == "RB")
-ggplot(rbs, aes(x=ADP, y=PAR)) +
-  geom_point() +
-  geom_text(label = rbs$Name, size = 2)  +
-  geom_smooth() +
-  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
-
-wrs <- pointsPlusADP %>% filter(position.x == "WR")
-ggplot(wrs, aes(x=ADP, y=PAR)) +
-  geom_point() +
-  geom_text(label = wrs$Name, size = 2)  +
-  geom_smooth() +
-  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
-
-
-TEs <- pointsPlusADP %>% filter(position.x == "TE")
-ggplot(TEs, aes(x=ADP, y=PAR)) +
-  geom_point() +
-  geom_text(label = TEs$Name, size = 2)  +
-  geom_smooth() +
-  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
-
-QBs <- pointsPlusADP %>% filter(position.x == "QB")
-ggplot(QBs, aes(x=ADP, y=PAR)) +
-  geom_point() +
-  geom_text(label = QBs$Name, size = 2)  +
-  geom_smooth() +
-  ggtitle("Points Above Replacement (PAR) vs Average Draft Pick (ADP)") 
-```
-
-
-
-
-
-
 ```{r}
 simplifiedRanks <- pointsPlusADP %>% 
   select(Name, position.x, projectedPoints, ADP,PAR) %>% 
@@ -1924,4 +2020,9 @@ write.csv(simplifiedRanks, file = "new ranks.csv")
 ```
 
 
+
+#Shiny app
+```{r}
+Names <- as.vector((available %>% arrange(ADP) %>% select(Name))[,2])
+```
 
