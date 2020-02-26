@@ -1,0 +1,281 @@
+Rank,NameTeam,Position
+1. (16),"Lamar Jackson, BAL",QB
+2. (61),"Patrick Mahomes, KC",QB
+3. (75),"Deshaun Watson, HOU",QB
+4. (76),"Kyler Murray, ARI",QB
+5. (77),"Russell Wilson, SEA",QB
+6. (105),"Dak Prescott, DAL",QB
+7. (106),"Carson Wentz, PHI",QB
+8. (107),"Jameis Winston, TB",QB
+9. (108),"Josh Allen, BUF",QB
+10. (109),"Matt Ryan, ATL",QB
+11. (110),"Aaron Rodgers, GB",QB
+12. (111),"Daniel Jones, NYG",QB
+13. (112),"Cam Newton, CAR",QB
+14. (132),"Drew Brees, NO",QB
+15. (133),"Matthew Stafford, DET",QB
+16. (134),"Ben Roethlisberger, PIT",QB
+17. (135),"Ryan Tannehill, TEN",QB
+18. (158),"Tom Brady, NE",QB
+19. (159),"Kirk Cousins, MIN",QB
+20. (160),"Jimmy Garoppolo, SF",QB
+21. (212),"Jared Goff, LAR",QB
+22. (219),"Baker Mayfield, CLE",QB
+23. (220),"Sam Darnold, NYJ",QB
+24. (243),"Dwayne Haskins, WAS",QB
+25. (244),"Drew Lock, DEN",QB
+26. (245),"Derek Carr, OAK",QB
+27. (266),"Philip Rivers, LAC",QB
+28. (267),"Ryan Fitzpatrick, MIA",QB
+29. (268),"Jacoby Brissett, IND",QB
+30. (269),"Gardner Minshew II, JAC",QB
+31. (270),"Mitchell Trubisky, CHI",QB
+32. (296),"Andy Dalton, CIN",QB
+33. (301),"Teddy Bridgewater, NO",QB
+34. (302),"Marcus Mariota, TEN",QB
+35. (310),"Tyrod Taylor, LAC",QB
+36. (315),"Eli Manning, NYG",QB
+37. (316),"Nick Foles, JAC",QB
+38. (317),"Kyle Allen, CAR",QB
+39. (318),"Joe Flacco, DEN",QB
+40. (319),"Case Keenum, WAS",QB
+1. (32),"Travis Kelce, KC",TE
+2. (33),"George Kittle, SF",TE
+3. (34),"Zach Ertz, PHI",TE
+4. (54),"Evan Engram, NYG",TE
+5. (55),"Mark Andrews, BAL",TE
+6. (62),"Darren Waller, OAK",TE
+7. (63),"Austin Hooper, ATL",TE
+8. (64),"Hunter Henry, LAC",TE
+9. (103),"Jared Cook, NO",TE
+10. (104),"Tyler Higbee, LAR",TE
+11. (121),"T.J. Hockenson, DET",TE
+12. (122),"Dallas Goedert, PHI",TE
+13. (123),"Noah Fant, DEN",TE
+14. (124),"O.J. Howard, TB",TE
+15. (136),"Mike Gesicki, MIA",TE
+16. (137),"Will Dissly, SEA",TE
+17. (161),"Irv Smith Jr., MIN",TE
+18. (162),"Eric Ebron, IND",TE
+19. (163),"Chris Herndon, NYJ",TE
+20. (193),"Kyle Rudolph, MIN",TE
+21. (210),"Dawson Knox, BUF",TE
+22. (211),"David Njoku, CLE",TE
+23. (246),"Jack Doyle, IND",TE
+24. (247),"Ian Thomas, CAR",TE
+25. (248),"Vance McDonald, PIT",TE
+26. (249),"Gerald Everett, LAR",TE
+27. (257),"Jonnu Smith, TEN",TE
+28. (258),"Jordan Reed, WAS",TE
+29. (259),"Jason Witten, DAL",TE
+30. (289),"Tyler Eifert, CIN",TE
+31. (290),"Jimmy Graham, GB",TE
+32. (291),"Greg Olsen, CAR",TE
+33. (292),"Delanie Walker, TEN",TE
+34. (293),"Hayden Hurst, BAL",TE
+35. (311),"Trey Burton, CHI",TE
+1. (1),"Christian McCaffrey, CAR",RB
+2. (3),"Saquon Barkley, NYG",RB
+3. (4),"Dalvin Cook, MIN",RB
+4. (5),"Ezekiel Elliott, DAL",RB
+5. (6),"Alvin Kamara, NO",RB
+6. (7),"Leonard Fournette, JAC",RB
+7. (14),"Aaron Jones, GB",RB
+8. (15),"Nick Chubb, CLE",RB
+9. (17),"Derrick Henry, TEN",RB
+10. (18),"Joe Mixon, CIN",RB
+11. (23),"Josh Jacobs, OAK",RB
+12. (24),"Miles Sanders, PHI",RB
+13. (25),"Melvin Gordon, LAC",RB
+14. (26),"Kenyan Drake, ARI",RB
+15. (27),"Austin Ekeler, LAC",RB
+16. (28),"Chris Carson, SEA",RB
+17. (41),"Todd Gurley II, LAR",RB
+18. (42),"Le'Veon Bell, NYJ",RB
+19. (43),"Devin Singletary, BUF",RB
+20. (44),"Marlon Mack, IND",RB
+21. (51),"Kerryon Johnson, DET",RB
+22. (52),"Phillip Lindsay, DEN",RB
+23. (53),"Mark Ingram II, BAL",RB
+24. (65),"Kareem Hunt, CLE",RB
+25. (66),"David Montgomery, CHI",RB
+26. (67),"Derrius Guice, WAS",RB
+27. (68),"James White, NE",RB
+28. (69),"James Conner, PIT",RB
+29. (70),"Devonta Freeman, ATL",RB
+30. (71),"David Johnson, ARI",RB
+31. (81),"Raheem Mostert, SF",RB
+32. (82),"Ronald Jones II, TB",RB
+33. (83),"Damien Williams, KC",RB
+34. (84),"Sony Michel, NE",RB
+35. (88),"Royce Freeman, DEN",RB
+36. (89),"Duke Johnson Jr., HOU",RB
+37. (90),"Rashaad Penny, SEA",RB
+38. (101),"Tevin Coleman, SF",RB
+39. (102),"Carlos Hyde, HOU",RB
+40. (125),"Tarik Cohen, CHI",RB
+41. (126),"Jordan Howard, PHI",RB
+42. (127),"Matt Breida, SF",RB
+43. (128),"Justice Hill, BAL",RB
+44. (129),"Alexander Mattison, MIN",RB
+45. (130),"Darrell Henderson Jr., LAR",RB
+46. (131),"Tony Pollard, DAL",RB
+47. (150),"Jamaal Williams, GB",RB
+48. (151),"Jerick McKinnon, SF",RB
+49. (152),"Adrian Peterson, WAS",RB
+50. (153),"Latavius Murray, NO",RB
+51. (154),"Ito Smith, ATL",RB
+52. (155),"Justin Jackson, LAC",RB
+53. (156),"Lamar Miller, HOU",RB
+54. (157),"Darwin Thompson, KC",RB
+55. (164),"Jaylen Samuels, PIT",RB
+56. (165),"Boston Scott, PHI",RB
+57. (166),"Nyheim Hines, IND",RB
+58. (167),"Bryce Love, WAS",RB
+59. (194),"Gus Edwards, BAL",RB
+60. (195),"Ryquell Armstead, JAC",RB
+61. (199),"Rex Burkhead, NE",RB
+62. (200),"Chase Edmonds, ARI",RB
+63. (201),"Malcolm Brown, LAR",RB
+64. (202),"Qadree Ollison, ATL",RB
+65. (203),"Darrel Williams, KC",RB
+66. (204),"Isaiah Crowell, OAK",RB
+67. (205),"Theo Riddick, DEN",RB
+68. (206),"Peyton Barber, TB",RB
+69. (207),"Chris Thompson, WAS",RB
+70. (208),"DeAndre Washington, OAK",RB
+71. (209),"Brian Hill, ATL",RB
+72. (235),"Jalen Richard, OAK",RB
+73. (236),"Bo Scarbrough, DET",RB
+74. (237),"Benny Snell Jr., PIT",RB
+75. (238),"Dion Lewis, TEN",RB
+76. (239),"LeSean McCoy, KC",RB
+77. (240),"Frank Gore, BUF",RB
+78. (241),"Jordan Wilkins, IND",RB
+79. (242),"Giovani Bernard, CIN",RB
+80. (250),"Myles Gaskin, MIA",RB
+81. (264),"Patrick Laird, MIA",RB
+82. (265),"Travis Homer, SEA",RB
+83. (276),"Mike Boone, MIN",RB
+84. (277),"T.J. Yeldon, BUF",RB
+85. (278),"Javorius Allen, NYG",RB
+1. (2),"Michael Thomas, NO",WR
+2. (8),"DeAndre Hopkins, HOU",WR
+3. (9),"Davante Adams, GB",WR
+4. (10),"Julio Jones, ATL",WR
+5. (11),"Tyreek Hill, KC",WR
+6. (12),"Mike Evans, TB",WR
+7. (13),"Chris Godwin, TB",WR
+8. (19),"Amari Cooper, DAL",WR
+9. (20),"Kenny Golladay, DET",WR
+10. (21),"Allen Robinson II, CHI",WR
+11. (22),"Keenan Allen, LAC",WR
+12. (29),"DJ Moore, CAR",WR
+13. (30),"Tyler Lockett, SEA",WR
+14. (31),"Courtland Sutton, DEN",WR
+15. (35),"A.J. Brown, TEN",WR
+16. (36),"Terry McLaurin, WAS",WR
+17. (37),"DJ Chark Jr., JAC",WR
+18. (38),"Tyler Boyd, CIN",WR
+19. (39),"Adam Thielen, MIN",WR
+20. (40),"Odell Beckham Jr., CLE",WR
+21. (45),"Julian Edelman, NE",WR
+22. (46),"Jarvis Landry, CLE",WR
+23. (47),"JuJu Smith-Schuster, PIT",WR
+24. (48),"DeVante Parker, MIA",WR
+25. (49),"Robert Woods, LAR",WR
+26. (50),"Cooper Kupp, LAR",WR
+27. (56),"Stefon Diggs, MIN",WR
+28. (57),"Deebo Samuel, SF",WR
+29. (58),"John Brown, BUF",WR
+30. (59),"DK Metcalf, SEA",WR
+31. (60),"Calvin Ridley, ATL",WR
+32. (72),"Antonio Brown, FA",WR
+33. (73),"T.Y. Hilton, IND",WR
+34. (74),"A.J. Green, CIN",WR
+35. (78),"Michael Gallup, DAL",WR
+36. (79),"Sterling Shepard, NYG",WR
+37. (80),"Darius Slayton, NYG",WR
+38. (85),"Christian Kirk, ARI",WR
+39. (86),"Brandin Cooks, LAR",WR
+40. (87),"Mike Williams, LAC",WR
+41. (91),"Alshon Jeffery, PHI",WR
+42. (92),"Curtis Samuel, CAR",WR
+43. (93),"Robby Anderson, NYJ",WR
+44. (94),"Will Fuller V, HOU",WR
+45. (95),"Preston Williams, MIA",WR
+46. (96),"Marquise Brown, BAL",WR
+47. (97),"Emmanuel Sanders, SF",WR
+48. (98),"Marvin Jones Jr., DET",WR
+49. (99),"N'Keal Harry, NE",WR
+50. (100),"Mecole Hardman, KC",WR
+51. (113),"Jamison Crowder, NYJ",WR
+52. (114),"Anthony Miller, CHI",WR
+53. (115),"Diontae Johnson, PIT",WR
+54. (116),"James Washington, PIT",WR
+55. (117),"Sammy Watkins, KC",WR
+56. (118),"John Ross III, CIN",WR
+57. (119),"Parris Campbell, IND",WR
+58. (120),"Dede Westbrook, JAC",WR
+59. (138),"Golden Tate, NYG",WR
+60. (139),"Cole Beasley, BUF",WR
+61. (140),"Mohamed Sanu, NE",WR
+62. (141),"DeSean Jackson, PHI",WR
+63. (142),"Jalen Hurd, SF",WR
+64. (143),"Larry Fitzgerald, ARI",WR
+65. (144),"Devin Funchess, IND",WR
+66. (145),"Tyrell Williams, OAK",WR
+67. (146),"Hunter Renfrow, OAK",WR
+68. (147),"Andy Isabella, ARI",WR
+69. (148),"JJ Arcega-Whiteside, PHI",WR
+70. (149),"Hakeem Butler, ARI",WR
+71. (168),"Chris Conley, JAC",WR
+72. (196),"Corey Davis, TEN",WR
+73. (197),"Randall Cobb, DAL",WR
+74. (198),"Kenny Stills, HOU",WR
+75. (213),"Nelson Agholor, PHI",WR
+76. (214),"Demarcus Robinson, KC",WR
+77. (215),"Steven Sims Jr., WAS",WR
+78. (216),"Jakobi Meyers, NE",WR
+79. (217),"Trent Taylor, SF",WR
+80. (218),"Kelvin Harmon, WAS",WR
+81. (225),"Adam Humphries, TEN",WR
+82. (226),"Tajae Sharpe, TEN",WR
+83. (227),"Breshad Perriman, TB",WR
+84. (228),"Zach Pascal, IND",WR
+85. (229),"Miles Boykin, BAL",WR
+86. (230),"Danny Amendola, DET",WR
+87. (231),"Auden Tate, CIN",WR
+88. (232),"Kendrick Bourne, SF",WR
+89. (233),"Demaryius Thomas, NYJ",WR
+90. (234),"Josh Reynolds, LAR",WR
+1. (169),Patriots D/ST (Wk 1: TBA),DST
+2. (170),49ers D/ST (Wk 1: TBA),DST
+3. (171),Steelers D/ST (Wk 1: TBA),DST
+4. (172),Ravens D/ST (Wk 1: TBA),DST
+5. (173),Vikings D/ST (Wk 1: TBA),DST
+6. (174),Bills D/ST (Wk 1: TBA),DST
+7. (175),Bears D/ST (Wk 1: TBA),DST
+8. (176),Rams D/ST (Wk 1: TBA),DST
+9. (177),Saints D/ST (Wk 1: TBA),DST
+10. (178),Jets D/ST (Wk 1: TBA),DST
+11. (179),Colts D/ST (Wk 1: TBA),DST
+12. (180),Broncos D/ST (Wk 1: TBA),DST
+13. (221),Buccaneers D/ST (Wk 1: TBA),DST
+14. (222),Titans D/ST (Wk 1: TBA),DST
+15. (253),Chiefs D/ST (Wk 1: TBA),DST
+1. (181),"Harrison Butker, KC",K
+2. (182),"Justin Tucker, BAL",K
+3. (183),"Wil Lutz, NO",K
+4. (184),"Greg Zuerlein, LAR",K
+5. (185),"Matt Prater, DET",K
+6. (186),"Michael Badgley, LAC",K
+7. (187),"Matt Gay, TB",K
+8. (188),"Joey Slye, CAR",K
+9. (189),"Brandon McManus, DEN",K
+10. (190),"Robbie Gould, SF",K
+11. (191),"Zane Gonzalez, ARI",K
+12. (192),"Ka'imi Fairbairn, HOU",K
+13. (223),"Josh Lambo, JAC",K
+14. (224),"Jason Myers, SEA",K
+15. (255),"Austin Seibert, CLE",K
