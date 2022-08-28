@@ -1,0 +1,385 @@
+depthChart,name rank,team
+QB1,Josh Allen (43),BUF
+QB2,Case Keenum (344),BUF
+RB1,Devin Singletary (58),BUF
+RB2,James Cook (107),BUF
+RB3,-,BUF
+WR1,Stefon Diggs (13),BUF
+WR2,Gabriel Davis (51),BUF
+WR3,Isaiah McKenzie (203),BUF
+WR4,Jamison Crowder (205),BUF
+TE1,Dawson Knox (126),BUF
+TE2,O.J. Howard (333),BUF
+K,Tyler Bass (158),BUF
+QB1,Joe Burrow (93),CIN
+QB2,-,CIN
+RB1,Joe Mixon (14),CIN
+RB2,Samaje Perine (237),CIN
+RB3,Chris Evans (240),CIN
+WR1,Ja'Marr Chase (6),CIN
+WR2,Tee Higgins (25),CIN
+WR3,Tyler Boyd (115),CIN
+WR4,-,CIN
+TE1,Hayden Hurst (186),CIN
+TE2,-,CIN
+K,Evan McPherson (152),CIN
+QB1,Matt Ryan (243),IND
+QB2,-,IND
+RB1,Jonathan Taylor (1),IND
+RB2,Nyheim Hines (120),IND
+RB3,Phillip Lindsay (304),IND
+WR1,Michael Pittman Jr. (30),IND
+WR2,Alec Pierce (183),IND
+WR3,Parris Campbell (234),IND
+WR4,-,IND
+TE1,Mo Alie-Cox (249),IND
+TE2,Kylen Granson (324),IND
+K,Rodrigo Blankenship (352),IND
+QB1,Russell Wilson (92),DEN
+QB2,-,DEN
+RB1,Javonte Williams (20),DEN
+RB2,Melvin Gordon III (119),DEN
+RB3,-,DEN
+WR1,Jerry Jeudy (46),DEN
+WR2,Courtland Sutton (47),DEN
+WR3,KJ Hamler (218),DEN
+WR4,-,DEN
+TE1,Albert Okwuegbunam (214),DEN
+TE2,Greg Dulcich (328),DEN
+K,Brandon McManus (156),DEN
+QB1,Tua Tagovailoa (128),MIA
+QB2,Teddy Bridgewater (318),MIA
+RB1,Chase Edmonds (83),MIA
+RB2,Raheem Mostert (162),MIA
+RB3,Sony Michel (197),MIA
+WR1,Tyreek Hill (17),MIA
+WR2,Jaylen Waddle (35),MIA
+WR3,Cedrick Wilson (204),MIA
+WR4,-,MIA
+TE1,Mike Gesicki (125),MIA
+TE2,-,MIA
+K,Jason Sanders (358),MIA
+QB1,Deshaun Watson (267),CLE
+QB2,Jacoby Brissett (302),CLE
+RB1,Nick Chubb (33),CLE
+RB2,Kareem Hunt (79),CLE
+RB3,D'Ernest Johnson (210),CLE
+WR1,Amari Cooper (64),CLE
+WR2Donovan Peoples-Jones (260),,CLE
+WR3,Anthony Schwartz (284),CLE
+WR4,-,CLE
+TE1,David Njoku (139),CLE
+TE2,Harrison Bryant (313),CLE
+K,Cade York (350),CLE
+QB1,Trevor Lawrence (127),JAX
+QB2,-,JAX
+RB1,Travis Etienne Jr. (48),JAX
+RB2,James Robinson (106),JAX
+RB3,Snoop Conner (281),JAX
+WR1,Christian Kirk (72),JAX
+WR2,Marvin Jones Jr. (134),JAX
+WR3,Zay Jones (272),JAX
+WR4,-,JAX
+TE1,Evan Engram (184),JAX
+TE2,Dan Arnold (293),JAX
+K,Michael Badgley (351),JAX
+QB1,Justin Herbert (54),LAC
+QB2,-,LAC
+RB1,Austin Ekeler (4),LAC
+RB2,Isaiah Spiller (199),LAC
+RB3,Joshua Kelley (242),LAC
+WR1,Keenan Allen (24),LAC
+WR2,Mike Williams (36),LAC
+WR3,Josh Palmer (132),LAC
+WR4,-,LAC
+TE1,Gerald Everett (246),LAC
+TE2,Donald Parham (314),LAC
+K,Dustin Hopkins (255),LAC
+QB1,Zach Wilson (219),NYJ
+QB2,Joe Flacco (340),NYJ
+RB1,Breece Hall (40),NYJ
+RB2,Michael Carter (118),NYJ
+RB3,-,NYJ
+WR1,Elijah Moore (75),NYJ
+WR2,Garrett Wilson (98),NYJ
+WR3,Corey Davis (231),NYJ
+WR4,Braxton Berrios (263),NYJ
+TE1,Tyler Conklin (258),NYJ
+TE2,C.J. Uzomah (312),NYJ
+K,Greg Zuerlein (353),NYJ
+QB1,Lamar Jackson (62),BAL
+QB2,Tyler Huntley (335),BAL
+RB1,J.K. Dobbins (41),BAL
+RB2,Mike Davis (196),BAL
+RB3,Gus Edwards (235),BAL
+WR1,Rashod Bateman (70),BAL
+WR2,Devin Duvernay (252),BAL
+WR3,-,BAL
+WR4,-,BAL
+TE1,Mark Andrews (19),BAL
+TE2,Isaiah Likely (259),BAL
+K,Justin Tucker (151),BAL
+QB1,Davis Mills (268),HOU
+QB2,Kyle Allen (342),HOU
+RB1,Dameon Pierce (82),HOU
+RB2,Marlon Mack (193),HOU
+RB3,Rex Burkhead (195),HOU
+WR1,Brandin Cooks (37),HOU
+WR2,Nico Collins (176),HOU
+WR3,Chris Conley (233),HOU
+WR4,-,HOU
+TE1,Brevin Jordan (257),HOU
+TE2,-,HOU
+K,Ka'imi Fairbairn (357),HOU
+QB1,Patrick Mahomes (53),KC
+QB2,Chad Henne (343),KC
+RB1,Clyde Edwards-Helaire (57),KC
+RB2,Jerick McKinnon (169),KC
+RB3,Isiah Pacheco (170),KC
+WR1,JuJu Smith-Schuster (68),KC
+WR2,Marquez Valdes-Scantling (113),KC
+WR3,Skyy Moore (114),KC
+WR4,Mecole Hardman (174),KC
+TE1,Travis Kelce (21),KC
+TE2,-,KC
+K,Harrison Butker (154),KC
+QB1,Mac Jones (244),NE
+QB2,-,NE
+RB1,Rhamondre Stevenson (80),NE
+RB2,Damien Harris (81),NE
+RB3,Ty Montgomery (208),NE
+WR1,Jakobi Meyers (111),NE
+WR2,DeVante Parker (135),NE
+WR3,Kendrick Bourne (216),NE
+WR4,Nelson Agholor (295),NE
+TE1,Hunter Henry (124),NE
+TE2,Jonnu Smith (291),NE
+K,Nick Folk (157),NE
+QB1,Kenny Pickett (270),PIT
+QB2,Mitchell Trubisky (301),PIT
+RB1,Najee Harris (8),PIT
+RB2,Benny Snell Jr. (280),PIT
+RB3,Jaylen Warren (306),PIT
+WR1,Diontae Johnson (34),PIT
+WR2,Chase Claypool (101),PIT
+WR3,George Pickens (172),PIT
+WR4,-,PIT
+TE1,Pat Freiermuth (109),PIT
+TE2,-,PIT
+K,Chris Boswell (287),PIT
+QB1,Ryan Tannehill (220),TEN
+QB2,Malik Willis (337),TEN
+RB1,Derrick Henry (7),TEN
+RB2,Dontrell Hilliard (211),TEN
+RB3,Hassan Haskins (213),TEN
+WR1,Robert Woods (99),TEN
+WR2,Treylon Burks (116),TEN
+WR3,Nick Westbrook-Ikhine (226),TEN
+WR4,-,TEN
+TE1,Austin Hooper (185),TEN
+TE2,-,TEN
+K,Randy Bullock (349),TEN
+QB1,Derek Carr (122),OAK
+QB2,-,OAK
+RB1,Josh Jacobs (55),OAK
+RB2,Zamir White (200),OAK
+RB3,Ameer Abdullah (207),OAK
+WR1,Davante Adams (11),OAK
+WR2,Hunter Renfrow (67),OAK
+WR3,Keelan Cole (294),OAK
+WR4,-,OAK
+TE1,Darren Waller (60),OAK
+TE2,Foster Moreau (329),OAK
+K,Daniel Carlson (155),OAK
+QB1,Dak Prescott (89),DAL
+QB2,-,DAL
+RB1,Ezekiel Elliott (42),DAL
+RB2,Tony Pollard (86),DAL
+RB3,Rico Dowdle (279),DAL
+WR1,CeeDee Lamb (16),DAL
+WR2,Jalen Tolbert (171),DAL
+WR3,Michael Gallup (175),DAL
+WR4,James Washington (273),DAL
+TE1,Dalton Schultz (77),DAL
+TE2,-,DAL
+K,Brett Maher (345),DAL
+QB1,Justin Fields (129),CHI
+QB2,-,CHI
+RB1,David Montgomery (39),CHI
+RB2,Khalil Herbert (167),CHI
+RB3,Trestan Ebner (309),CHI
+WR1,Darnell Mooney (50),CHI
+WR2,Velus Jones Jr. (225),CHI
+WR3,Byron Pringle (274),CHI
+WR4,-,CHI
+TE1,Cole Kmet (110),CHI
+TE2,-,CHI
+K,Cairo Santos (355),CHI
+QB1,Tom Brady (90),TB
+QB2,-,TB
+RB1,Leonard Fournette (18),TB
+RB2,Rachaad White (194),TB
+RB3,Ke'Shawn Vaughn (241),TB
+WR1,Mike Evans (26),TB
+WR2,Chris Godwin (52),TB
+WR3,Russell Gage (112),TB
+WR4,Julio Jones (177),TB
+TE1,Kyle Rudolph (290),TB
+TE2,Cameron Brate (311),TB
+K,Ryan Succop (224),TB
+QB1,Trey Lance (103),SF
+QB2,Jimmy Garoppolo (316),SF
+RB1,Elijah Mitchell (56),SF
+RB2,Tyrion Davis-Price (209),SF
+RB3,Jeff Wilson Jr. (276),SF
+WR1,Deebo Samuel (12),SF
+WR2,Brandon Aiyuk (97),SF
+WR3,Jauan Jennings (275),SF
+WR4,-,SF
+TE1,George Kittle (61),SF
+TE2,-,SF
+K,Robbie Gould (223),SF
+QB1,Jalen Hurts (76),PHI
+QB2,Gardner Minshew II (319),PHI
+RB1,Miles Sanders (59),PHI
+RB2,Kenneth Gainwell (166),PHI
+RB3,Boston Scott (239),PHI
+WR1,A.J. Brown (31),PHI
+WR2,DeVonta Smith (74),PHI
+WR3,-,PHI
+WR4,-,PHI
+TE1,Dallas Goedert (87),PHI
+TE2,-,PHI
+K,Jake Elliott (192),PHI
+QB1,Jared Goff (245),DET
+QB2,-,DET
+RB1,D'Andre Swift (15),DET
+RB2,Jamaal Williams (165),DET
+RB3,Justin Jackson (265),DET
+WR1,Amon-Ra St. Brown (49),DET
+WR2,DJ Chark Jr. (130),DET
+WR3,Jameson Williams (182),DET
+WR4,-,DET
+TE1,T.J. Hockenson (78),DET
+TE2,-,DET
+K,Austin Seibert (347),DET
+QB1,Marcus Mariota (269),ATL
+QB2,Desmond Ridder (315),ATL
+RB1,Cordarrelle Patterson (85),ATL
+RB2,Tyler Allgeier (168),ATL
+RB3,Damien Williams (236),ATL
+WR1,Drake London (71),ATL
+WR2,Bryan Edwards (261),ATL
+WR3,-,ATL
+WR4,-,ATL
+TE1,Kyle Pitts (38),ATL
+TE2,-,ATL
+K,Younghoe Koo (288),ATL
+QB1,Kyler Murray (63),ARI
+QB2,-,ARI
+RB1,James Conner (22),ARI
+RB2,Darrel Williams (198),ARI
+RB3,Eno Benjamin (264),ARI
+WR1,Marquise Brown (44),ARI
+WR2,DeAndre Hopkins (100),ARI
+WR3,Rondale Moore (173),ARI
+WR4,A.J. Green (232),ARI
+TE1,Zach Ertz (88),ARI
+TE2,Trey McBride (327),ARI
+K,Matt Prater (159),ARI
+QB1,Daniel Jones (187),NYG
+QB2,Tyrod Taylor (336),NYG
+RB1,Saquon Barkley (28),NYG
+RB2,Matt Breida (238),NYG
+RB3,Gary Brightwell (303),NYG
+WR1,Kadarius Toney (95),NYG
+WR2,Kenny Golladay (136),NYG
+WR3,Wan'Dale Robinson (180),NYG
+WR4,Sterling Shepard (229),NYG
+TE1,Daniel Bellinger (323),NYG
+TE2,-,NYG
+K,Graham Gano (160),NYG
+QB1,Aaron Rodgers (91),GB
+QB2,Jordan Love (338),GB
+RB1,Aaron Jones (23),GB
+RB2,AJ Dillon (104),GB
+RB3,-,GB
+WR1,Allen Lazard (96),GB
+WR2,Christian Watson (181),GB
+WR3,Romeo Doubs (217),GB
+WR4,Randall Cobb (230),GB
+TE1,Robert Tonyan (248),GB
+TE2,Josiah Deguara (330),GB
+K,Mason Crosby (256),GB
+QB1,Baker Mayfield (266),CAR
+QB2,Sam Darnold (317),CAR
+RB1,Christian McCaffrey (2),CAR
+RB2,D'Onta Foreman (202),CAR
+RB3,Chuba Hubbard (206),CAR
+WR1,DJ Moore (27),CAR
+WR2,Robbie Anderson (133),CAR
+WR3,Terrace Marshall Jr. (271),CAR
+WR4,-,CAR
+TE1,Tommy Tremble (289),CAR
+TE2,-,CAR
+K,Zane Gonzalez (354),CAR
+QB1,Matthew Stafford (94),LAR
+QB2,-,LAR
+RB1,Cam Akers (29),LAR
+RB2,Darrell Henderson Jr. (164),LAR
+RB3,-,LAR
+WR1,Cooper Kupp (3),LAR
+WR2,Allen Robinson II (66),LAR
+WR3,Van Jefferson (178),LAR
+WR4,-,LAR
+TE1,Tyler Higbee (140),LAR
+TE2,-,LAR
+K,Matt Gay (153),LAR
+QB1,Carson Wentz (215),WSH
+QB2,Taylor Heinicke (341),WSH
+RB1,Antonio Gibson (84),WSH
+RB2,Brian Robinson Jr. (121),WSH
+RB3,J.D. McKissic (161),WSH
+WR1,Terry McLaurin (32),WSH
+WR2,Jahan Dotson (117),WSH
+WR3,Curtis Samuel (179),WSH
+WR4,-,WSH
+TE1,Logan Thomas (247),WSH
+TE2,John Bates (325),WSH
+K,Joey Slye (346),WSH
+QB1,Kirk Cousins (123),MIN
+QB2,-,MIN
+RB1,Dalvin Cook (10),MIN
+RB2,Alexander Mattison (163),MIN
+RB3,Kene Nwangwu (282),MIN
+WR1,Justin Jefferson (5),MIN
+WR2,Adam Thielen (69),MIN
+WR3,K.J. Osborn (227),MIN
+WR4,-,MIN
+TE1,Irv Smith Jr. (138),MIN
+TE2,-,MIN
+K,Greg Joseph (191),MIN
+QB1,Jameis Winston (188),NO
+QB2,Andy Dalton (339),NO
+RB1,Alvin Kamara (9),NO
+RB2,Mark Ingram II (201),NO
+RB3,Dwayne Washington (278),NO
+WR1,Michael Thomas (65),NO
+WR2,Chris Olave (102),NO
+WR3,Jarvis Landry (131),NO
+WR4,-,NO
+TE1,Adam Trautman (292),NO
+TE2,Taysom Hill (332),NO
+K,Wil Lutz (348),NO
+QB1,Drew Lock (296),SEA
+QB2,Geno Smith (310),SEA
+RB1,Rashaad Penny (105),SEA
+RB2,Ken Walker III (108),SEA
+RB3,DeeJay Dallas (250),SEA
+WR1,DK Metcalf (45),SEA
+WR2,Tyler Lockett (73),SEA
+WR3,D'Wayne Eskridge (251),SEA
+WR4,-,SEA
+TE1,Noah Fant (137),SEA
+TE2,Will Dissly (331),SEA
+K,Jason Myers (356),SEA
