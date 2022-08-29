@@ -1,0 +1,1866 @@
+2018 MASSACRE
+```{r}
+modelData
+pre2018 <- modelData %>% filter(year < 2018) 
+pre2018 <- pre2018 %>% select(-c(Name, year, team)) %>%  filter(!position %in% c("ST", "K"))
+preds2018 <- modelData %>% filter(year == 2018) %>% filter(!position %in% c("ST", "K"))
+copy2018 <- preds2018
+copy <- preds2018
+preds2018 <- preds2018 %>% select(-c(Name, year, team))
+
+yTrain <- pre2018$actualPoints
+xTrain <- pre2018 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+yTest <- preds2018$actualPoints
+xTest <- preds2018 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+
+trainPLS <- pre2018 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(pre2018) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+trainPLS <- pre2018 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(trainPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+
+testPLS <- preds2018 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(preds2018) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+testPLS <- preds2018 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(testPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+```
+
+#Calculate differences
+```{r}
+logit2018 <- lm(actualPoints ~., data = pre2018, na.action = na.exclude)
+rf2018 <- randomForest(actualPoints~., data = pre2018)
+predictions <- predict(logit2018,preds2018[,-1], type="response")
+copy2018$predictions <- predictions
+predictionsrf <- predict(rf2018,preds2018[,-1], type="response")
+copy2018$rfPreds <- predictionsrf
+copy$predictions <- predictions
+copy %>% arrange(-predictions)
+
+copy
+
+comparison <- copy %>% 
+  arrange(position, -predictions) %>% 
+  group_by(position) %>% 
+  mutate(predictedPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, rank) %>% 
+  group_by(position) %>% 
+  mutate(espnPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, -actualPoints) %>% 
+  group_by(position) %>% 
+  mutate(actualPosRank = row_number()) %>% 
+  ungroup() %>% 
+  select(Name, actualPoints, predictions, rank, actualPosRank, predictedPosRank, espnPosRank)
+
+
+espn <- lm(actualPoints ~ rank, data = pre2018)
+ranks <- data_frame(rank = preds2018$rank)
+mse <- (preds2018$actualPoints  - predict(espn, ranks))^2 
+espnRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+mse <- (preds2018$actualPoints - predictions)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+cor(preds2018$actualPoints, predictions)
+
+logit2018improvement <- 1 - myRMSE / espnRMSE
+
+mse <- (preds2018$actualPoints - predictionsrf)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+rf2018improvement <- 1 - myRMSE / espnRMSE
+```
+
+2018 ridge
+```{r}
+cv_fit <- cv.glmnet(xTrain, yTrain, alpha = 0, lambda = lambdas)
+plot(cv_fit)
+opt_lambda <- cv_fit$lambda.min
+fit <- cv_fit$glmnet.fit
+
+
+
+y_predicted <- predict(fit, s = opt_lambda, newx = xTest)
+copy2018$ridgePreds <- y_predicted
+sst <- sum((yTest - mean(yTest))^2)
+sse <- sum((y_predicted - yTest)^2)
+
+plot(y_predicted, yTest)
+
+# R squared
+rsq <- 1 - sse / sst
+rsq
+
+rmse <- (sse / length(yTest))^.5
+
+
+ridge2018improvement <- 1 - rmse / espnRMSE
+
+class(y_predicted)
+copy$predictions <- as.numeric(y_predicted)
+copy %>% arrange(-predictions)
+```
+
+2018 PLS 
+```{r}
+model <- train(
+  actualPoints~., data = trainPLS, method = "pls",
+  scale = TRUE,
+  trControl = trainControl("cv", number = 10),
+  tuneLength = 10
+  ) 
+
+plot(model) 
+model$bestTune 
+summary(model$finalModel) 
+
+predictions <- model %>% predict(testPLS) 
+copy2018$plsPredictions <- predictions
+
+MSE <- mean((predictions - testPLS$actualPoints)^2)
+RMSE <- (sum(MSE))^.5
+
+pls2018improvement <- 1 - RMSE / espnRMSE
+```
+
+
+
+2017
+```{r}
+pre2017 <- modelData %>% filter(year < 2017) 
+pre2017 <- pre2017 %>% select(-c(Name, year, team)) %>%  filter(!position %in% c("ST", "K"))
+preds2017 <- modelData %>% filter(year == 2017) %>% filter(!position %in% c("ST", "K"))
+copy2017 <- preds2017
+copy <- preds2017
+preds2017 <- preds2017 %>% select(-c(Name, year, team))
+
+yTrain <- pre2017$actualPoints
+xTrain <- pre2017 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+yTest <- preds2017$actualPoints
+xTest <- preds2017 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+
+trainPLS <- pre2017 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(pre2017) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+trainPLS <- pre2017 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(trainPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+
+testPLS <- preds2017 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(preds2017) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+testPLS <- preds2017 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(testPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+```
+
+
+```{r}
+logit2017 <- lm(actualPoints ~., data = pre2017)
+rf2017 <- randomForest(actualPoints~., data = pre2017)
+predictions <- predict(logit2017,preds2017[,-1], type="response")
+copy2017$predictions <- predictions
+predictionsrf <- predict(rf2017, preds2017[,-1], type = "response")
+copy2017$rfPreds <- predictionsrf
+copy$predictions <- predictions
+copy %>% arrange(-predictions)
+
+comparison <- copy %>% 
+  arrange(position, -predictions) %>% 
+  group_by(position) %>% 
+  mutate(predictedPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, rank) %>% 
+  mutate(espnPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, -actualPoints) %>% 
+  group_by(position) %>% 
+  mutate(actualPosRank = row_number()) %>% 
+  ungroup() %>% 
+  select(Name, actualPosRank, predictedPosRank, espnPosRank)
+
+
+espn <- lm(actualPoints ~ rank, data = pre2017)
+ranks <- data_frame(rank = preds2017$rank)
+mse <- (preds2017$actualPoints  - predict(espn, ranks))^2 
+espnRMSE <- (sum(mse / nrow(preds2017)))^.5
+
+
+mse <- (preds2018$actualPoints - predictions)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+logit2017improvement <- 1 - myRMSE / espnRMSE
+
+mse <- (preds2018$actualPoints - predictionsrf)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+rf2017improvement <- 1 - myRMSE / espnRMSE
+```
+
+2017 ridge
+```{r}
+cv_fit <- cv.glmnet(xTrain, yTrain, alpha = 0, lambda = lambdas)
+plot(cv_fit)
+opt_lambda <- cv_fit$lambda.min
+fit <- cv_fit$glmnet.fit
+
+
+
+y_predicted <- predict(fit, s = opt_lambda, newx = xTest)
+copy2017$ridgePreds <- y_predicted
+sst <- sum((yTest - mean(yTest))^2)
+sse <- sum((y_predicted - yTest)^2)
+
+plot(y_predicted, yTest)
+
+# R squared
+rsq <- 1 - sse / sst
+rsq
+
+rmse <- (sse / length(yTest))^.5
+
+
+ridge2017improvement <- 1 - rmse / espnRMSE
+
+class(y_predicted)
+copy$predictions <- as.numeric(y_predicted)
+copy %>% arrange(-predictions)
+```
+
+PLS
+```{r}
+model <- train(
+  actualPoints~., data = trainPLS, method = "pls",
+  scale = TRUE,
+  trControl = trainControl("cv", number = 10),
+  tuneLength = 10
+  ) 
+
+plot(model) 
+model$bestTune 
+summary(model$finalModel) 
+
+predictions <- model %>% predict(testPLS) 
+copy2017$plsPredictions <- predictions
+
+MSE <- mean((predictions - testPLS$actualPoints)^2)
+RMSE <- (sum(MSE))^.5
+
+pls2017improvement <- 1 - RMSE / espnRMSE
+```
+
+
+
+2016
+```{r}
+pre2016 <- modelData %>% filter(year < 2016) 
+pre2016 <- pre2016 %>% select(-c(Name, year, team)) %>%  filter(!position %in% c("ST", "K"))
+preds2016 <- modelData %>% filter(year == 2016) %>% filter(!position %in% c("ST", "K"))
+copy2016 <- preds2016
+copy <- preds2016
+preds2016 <- preds2016 %>% select(-c(Name, year, team))
+
+yTrain <- pre2016$actualPoints
+xTrain <- pre2016 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+yTest <- preds2016$actualPoints
+xTest <- preds2016 %>% select(c(-actualPoints)) %>% 
+  select(everything()) %>%  data.matrix()
+
+trainPLS <- pre2016 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(pre2016) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+trainPLS <- pre2016 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(trainPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+
+testPLS <- preds2016 %>% 
+  group_by(position, yearsFromPresent) %>% 
+  summarise(avgPositionPTs = mean(PPR)) %>% 
+  ungroup() %>% 
+  right_join(preds2016) %>% 
+  mutate(position = avgPositionPTs) %>% 
+  select(-avgPositionPTs, -yearsFromPresent, -closestName)
+testPLS <- preds2016 %>% 
+  group_by(depthChart, yearsFromPresent) %>% 
+  summarise(avgDepthChartPTs = mean(DKPt)) %>% 
+  ungroup() %>% 
+  right_join(testPLS) %>% 
+  mutate(depthChart = avgDepthChartPTs) %>% 
+  select(-avgDepthChartPTs)
+
+```
+
+
+
+```{r}
+logit2016 <- lm(actualPoints ~., data = pre2016)
+predictions <- predict(logit2016,preds2016[,-1], type="response")
+copy2016$predictions <- predictions
+rf2016 <- randomForest(actualPoints ~., data = pre2016)
+predictionsrf <- predict(rf2016,preds2016[,-1], type="response")
+copy2016$rfPreds <- predictionsrf
+  
+copy$predictions <- predictions
+copy %>% arrange(-predictions)
+
+comparison <- copy %>% 
+  arrange(position, -predictions) %>% 
+  group_by(position) %>% 
+  mutate(predictedPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, rank) %>% 
+  mutate(espnPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position, -actualPoints) %>% 
+  group_by(position) %>% 
+  mutate(actualPosRank = row_number()) %>% 
+  ungroup() %>% 
+  select(Name, actualPosRank, predictedPosRank, espnPosRank)
+
+
+espn <- lm(actualPoints ~ rank, data = pre2016)
+ranks <- data_frame(rank = pre2016$rank)
+mse <- (pre2016$actualPoints  - predict(espn, ranks))^2 
+espnRMSE <- (sum(mse / nrow(pre2016)))^.5
+
+mse <- (preds2018$actualPoints - predictions)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+logit2016improvement <- 1 - myRMSE / espnRMSE
+
+mse <- (preds2018$actualPoints - predictionsrf)^2
+myRMSE <- (sum(mse / nrow(preds2018)))^.5
+
+rf2016improvement <- 1 - myRMSE / espnRMSE
+
+```
+
+2016 ridge
+```{r}
+cv_fit <- cv.glmnet(xTrain, yTrain, alpha = 0, lambda = lambdas)
+plot(cv_fit)
+opt_lambda <- cv_fit$lambda.min
+fit <- cv_fit$glmnet.fit
+
+
+
+y_predicted <- predict(fit, s = opt_lambda, newx = xTest)
+copy2016$ridgePreds <- y_predicted
+sst <- sum((yTest - mean(yTest))^2)
+sse <- sum((y_predicted - yTest)^2)
+
+plot(y_predicted, yTest)
+
+# R squared
+rsq <- 1 - sse / sst
+rsq
+
+rmse <- (sse / length(yTest))^.5
+
+
+ridge2016improvement <- 1 - rmse / espnRMSE
+
+class(y_predicted)
+copy$predictions <- as.numeric(y_predicted)
+copy %>% arrange(-predictions)
+```
+
+
+PLS 2016
+```{r}
+model <- train(
+  actualPoints~., data = trainPLS, method = "pls",
+  scale = TRUE,
+  trControl = trainControl("cv", number = 10),
+  tuneLength = 10
+  ) 
+
+plot(model) 
+model$bestTune 
+summary(model$finalModel) 
+
+predictions <- model %>% predict(testPLS) 
+copy2016$plsPredictions <- predictions
+
+MSE <- mean((predictions - testPLS$actualPoints)^2)
+RMSE <- (sum(MSE))^.5
+
+pls2016improvement <- 1 - RMSE / espnRMSE
+```
+
+
+
+
+combine all data
+```{r}
+df <- NULL
+linears <- as.numeric(list(logit2018improvement, logit2017improvement, logit2016improvement))
+rf <- as.numeric(list(rf2018improvement, rf2017improvement, rf2016improvement))
+ridge <- as.numeric(list(ridge2018improvement, ridge2017improvement, ridge2016improvement))
+pls <- as.numeric(list(pls2018improvement, pls2017improvement, pls2016improvement))
+
+allModels <- as.data.frame(rbind(linears, rf, ridge, pls))
+colnames(allModels) <- c("2018", "2017", "2016")
+
+allModels
+```
+
+
+```{r}
+allPreds <- rbind(copy2018, copy2017, copy2016)
+
+allPreds
+```
+
+
+
+2019
+```{r}
+setwd("/Users/jacksoslow/Downloads")
+getwd()
+data2019 <- read.csv("2019 data - Sheet1.csv")
+```
+
+```{r}
+i = 1
+data2019$Name <- as.character(data2019$Name)
+split_strings <- str_split(data2019$Name, "\n")
+for (i in 1:nrow(data2019)) {
+  name <- split_strings[[i]][1]
+  data2019$Name[i] <- name
+}
+
+questionables <- grepl("^.+(Q)$",data2019$Name)
+suspended <- grepl("^.+(SSPD)$",data2019$Name)
+out <- grepl("^.+(O)$",data2019$Name)
+doubtful <- grepl("^.+(D)$",data2019$Name)
+injuredReserve <- grepl("^.+(IR)$",data2019$Name)
+
+
+data2019[questionables,]$Name <- str_sub(data2019[questionables,]$Name, 1, -2)
+data2019[questionables,]$isQuestionable <- 1
+
+data2019[suspended,]$Name <- str_sub(data2019[suspended,]$Name, 1, -4)
+data2019[suspended,]$isSuspended <- 1
+
+data2019[out,]$Name <- str_sub(data2019[out,]$Name, 1, -2)
+data2019[out,]$isOut <- 1
+
+data2019[doubtful,]$Name <- str_sub(data2019[doubtful,]$Name, 1, -2)
+data2019[doubtful,]$isDoubtful <- 1
+
+data2019[injuredReserve,]$Name <- str_sub(data2019[injuredReserve,]$Name, 1, -3)
+data2019[injuredReserve,]$injuredReserve <- 1
+```
+
+combine 2019 data
+```{r}
+combined2019 <- pointsPlusADP %>% 
+  left_join(data2019, by =c("Name" = "Name")) %>% 
+  select(Name, predictions, points)
+
+combined2019$points[is.na(combined2019$points)] <- 0
+```
+
+make espn predictions
+```{r}
+clean <- pointsPlusADP %>% 
+  rename(rank = Rank.x,
+         position = position.x) %>% 
+  mutate(year = 2019) 
+
+
+espnModel <- lm(actualPoints ~ rank + position, data = modelData)
+preds <- predict(espnModel, clean, type = "response")
+
+combined2019$espnPoints <- preds
+```
+
+Compare
+```{r}
+combined2019 <- combined2019 %>% 
+  mutate(myRMSE = predictions - points,
+         espnRMSE = espnPoints - points) %>% 
+  filter(!is.na(myRMSE))
+
+mean(combined2019$myRMSE)
+mean(combined2019$espnRMSE)
+
+rmse(combined2019$points, combined2019$myRMSE)
+rmse(combined2019$points, combined2019$espnRMSE)
+```
+
+```{r}
+qqPlot(combined2019$myRMSE)
+```
+
+```{r}
+combined2019 %>% 
+  mutate(difRMSE = abs(myRMSE) - abs(espnRMSE)) %>% 
+  arrange(difRMSE)
+```
+
+Create a posrank
+```{r}
+posRanks <- combined2019 %>% 
+  arrange(position.x, -points) %>% 
+  group_by(position.x) %>% 
+  mutate(finalPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position.x, -predictions) %>% 
+  group_by(position.x) %>% 
+  mutate(predPosRank = row_number()) %>% 
+  ungroup() %>% 
+  arrange(position.x, -espnPoints) %>% 
+  group_by(position.x) %>% 
+  mutate(espnPosRank = row_number()) %>% 
+  ungroup()
+```
+
+```{r}
+posRanks <- posRanks %>% 
+  mutate(predError = predPosRank - finalPosRank,
+         espnError = espnPosRank - finalPosRank) %>% 
+  mutate(difError = abs(predError) - abs(espnError))
+
+posRanks %>% arrange(-difError) %>% 
+  select(Name,finalPosRank, predPosRank,espnPosRank)
+```
+
+
+Lasso 
+Prep data for Lasso
+```{r}
+train <- train %>% 
+  select(nextSeasonPAR, everything()) %>% 
+  na.omit()
+test <- test %>% 
+  select(nextSeasonPAR, everything()) %>% 
+  na.omit()
+X <- sparse.model.matrix(nextSeasonPAR~., data=train)[, -1]
+Y <- train$nextSeasonPAR
+
+Xtest<- sparse.model.matrix(nextSeasonPAR~., data=test)[, -1]
+Ytest <- test$nextSeasonPAR
+```
+
+Run Lasso regression
+```{r}
+result.lasso.1 <- cv.glmnet(X, Y, alpha=.99, family="gaussian")  # 1.5 minutes in my MAC
+plot(result.lasso.1)
+```
+
+```{r}
+coef.1se <- coef(result.lasso.1, s="lambda.1se")  
+coef.1se <- coef.1se[which(coef.1se !=0),] 
+beta <- as.matrix(coef.1se);
+beta <- rownames(beta)
+beta
+```
+
+
+```{r}
+partial(rf, pred.var = "rank", plot = TRUE, rug = TRUE)
+```
+```{r}
+# Compute partial dependence data for lstat and rm
+pd2 <- partial(rf, pred.var = c("rank", "depthChart"))
+
+# Default PDP
+pdp2 <- plotPartial(pd2)
+pdp2
+```
+
+
+```{r}
+# Compute partial dependence data for lstat and rm
+pd <- partial(rf, pred.var = c("rank", "PAR"))
+
+# Default PDP
+pdp1 <- plotPartial(pd)
+pdp1
+```
+
+```{r}
+##min_depth_frame <- min_depth_distribution(rf)
+```
+
+```{r}
+plot_min_depth_distribution(min_depth_frame)
+```
+
+```{r}
+```
+
+```{r}
+pd1 <- partial(rf, pred.var = c("fantasy_points_8", "depthChart"))
+# Default PDP
+pdp1 <- plotPartial(pd1)
+pdp1
+```
+
+```{r}
+season <- 2019
+
+combo2 <- combo %>%
+  filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+  mutate(years_from_season = season - year) 
+
+combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+  
+modelData <- combo2 %>% 
+    select(-c("Name", "team.y", "position.y", "position.x", "team.x", "nextSeasonsTeam", "gsis_id", "team"))
+
+train <- modelData %>% filter(year < season)
+test <- modelData %>% filter(year == season)
+preds <- combo2 %>% filter(year == season)
+```
+
+
+```{r}
+rf <- randomForest(nextSeasonPAR ~
+                     rank + 
+                     position +
+                     PAR +
+                     positive_weekly_PAR +
+                     PAR_8 +
+                     PAR_4 +
+                     depthChart +
+                     games_played +
+                     isRookie +
+                     team, 
+      data = train)
+```
+
+
+
+```{r}
+rf 
+vip(rf)
+
+preds$rf_preds <- predict(rf, test)
+
+ggplot(preds, aes(x = positive_weekly_PAR, y = nextSeasonPAR, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = PAR, y = nextSeasonPAR, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = rf_preds, y = rf_preds - positive_weekly_PAR)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm') +
+  geom_hline(yintercept = 0)
+```
+
+```{r}
+# Load library
+library(h2o)
+# start h2o cluster
+#invisible(h2o.init())
+# convert data as h2o type
+train_h = as.h2o(train)
+test_h = as.h2o(test)
+# set label type
+y = 'nextSeasonPAR'
+pred = setdiff(names(train), y)
+#convert variables to factors
+aml <- h2o.automl(y = y,
+                  training_frame = train_h,
+                  leaderboard_frame = test_h,
+                  max_runtime_secs = 60,
+                  seed = 1,
+                  project_name = "test3")
+# AutoML Leaderboard
+lb = aml@leaderboard
+lb
+# prediction result on test data
+preds_water <- h2o.predict(aml@leader, test_h)
+preds$gbm_preds <- as.vector(unlist(preds_water))
+
+
+aml@leader
+# close h2o connection
+h2o.shutdown(prompt = F)
+
+ggplot(preds, aes(x = gbm_preds, y = nextSeasonPAR, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = PAR, y = gbm_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = gbm_preds, y = gbm_preds - nextSeasonPAR)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm') +
+  geom_hline(yintercept = 0)
+
+preds %>% 
+  arrange(-gbm_preds) %>% 
+  select(Name, rank, team.x, position.x, gbm_preds, nextSeasonPAR)
+```
+
+```{r}
+season <- 2020
+
+combo2 <- combo %>%
+  filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+  mutate(years_from_season = season - year) 
+
+combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+  
+modelData <- combo2 %>% 
+  filter(year < season) %>% 
+    select(-c("Name", "team.y", "position.y", "position.x", "team.x", "nextSeasonsTeam", "gsis_id", "team", "years_from_season"))
+
+
+indeces <- sample(1:nrow(modelData), 0.8 * nrow(modelData))
+train <- modelData[indeces,]
+test <- modelData[-indeces,]
+preds <- combo2 %>% filter(year == season)
+test_preds <- combo2 %>% 
+  filter(year == season) %>% 
+  select(-c("Name", "team.y", 
+            "position.y", "position.x",
+            "team.x", "nextSeasonsTeam", 
+            "gsis_id", "team", "years_from_season"))
+
+
+modelData <- combo2 %>% 
+    select(-c("Name", "team.y", "position.y", "position.x", "team.x", "nextSeasonsTeam", "gsis_id", "team", "years_from_season"))
+
+train <- modelData %>% filter(year < season-1)
+test <- modelData %>% filter(year == season-1) 
+
+indeces <- sample(1:nrow(test), 0.5 * nrow(test))
+train <- bind_rows(train, test[-indeces,])
+test <- test[indeces,]
+preds <- combo2 %>% filter(year == season)
+test_preds <- modelData %>% filter(year == season)
+```
+
+```{r}
+season <- 2019
+
+combo2 <- combo %>%
+  ungroup() %>% 
+  filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+  mutate(years_from_season = season - year, 
+         years_from_season = max(years_from_season) - years_from_season + 1)
+
+combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+  
+modelData <- combo2 %>% 
+    select(-c("Name", "team.y",
+              "position.y", "position.x",
+              "team.x", "nextSeasonsTeam",
+              "gsis_id", "team"))
+
+train <- modelData %>% filter(year < season) %>% 
+  select(-year)
+test <- modelData %>% filter(year == season) %>% 
+  select(-year)
+preds <- combo2 %>% filter(year == season)
+test_preds <- modelData %>% filter(year == season)
+```
+
+```{r}
+b <- modelData %>% 
+  filter(year < season) %>%
+  group_by(year) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(next_season_rank = row_number())
+
+b$vals <- runif(n = nrow(b),0,1)
+
+
+train <- bind_rows(modelData %>% filter(year < season),
+                   b %>% filter(next_season_rank <= 100, 
+                                vals <= .5)) %>% 
+  select(-c(next_season_rank, vals))
+test <- b %>% filter(next_season_rank <= 100, 
+                                vals <= .5) %>% 
+  select(-c(next_season_rank, vals))
+
+
+modelData2 <- combo2 %>% 
+    select(-c("Name", "team.y",
+              "position.y", "position.x",
+              "team.x", "nextSeasonsTeam",
+              "gsis_id", "team")) %>% 
+  select('rank',
+         'PAR', 
+         'position', 
+         'depthChart',
+         'PAR_8', 
+         'Raw_AirYards_per_Drive',
+         'posrank', 
+         'rb1', 
+         'wr1',
+         'sd_PAR',
+         'weekly_PAR',
+         'isRookie', 
+         'Total_Yards',
+         'PAR_4',
+         'Raw_AirYards_per_Att',
+         'rb2', 
+         'positive_weekly_PAR',
+         'games_played',
+         'passYards',
+         'nextSeasonPAR')
+```
+
+
+```{r}
+train_h = as.h2o(train)
+test_h = as.h2o(test)
+preds_h = as.h2o(test_preds)
+# set label type
+y = 'nextSeasonPAR'
+x = setdiff(names(train), y)
+#convert variables to factors
+aml2 <- h2o.automl(y = y,
+                  x = x,
+                  training_frame = train_h,
+                  weights_column = 'years_from_season',
+                  nfolds = 6,
+                  seed = 1,
+                  max_runtime_secs = 60)
+# AutoML Leaderboard
+lb = aml2@leaderboard
+as.data.frame(lb)
+f <- as.data.frame(lb) %>% 
+  filter(grepl('Stacked', model_id)) %>% 
+  .$model_id
+ensemble <- h2o.getModel(f[1])
+leader <- aml2@leader
+# prediction result on test data
+preds_water_ensemble <- h2o.predict(ensemble, preds_h)
+preds_water <- h2o.predict(leader, preds_h)
+
+preds$h2o_preds <- as.vector(unlist(preds_water_ensemble))
+preds$gbm_preds <- as.vector(unlist(preds_water))
+
+preds %>% 
+  arrange(-gbm_preds)
+
+preds %>% 
+  arrange(-gbm_preds) %>% 
+  select(Name, rank, team.x, position.x, PAR, nextSeasonPAR, h2o_preds, gbm_preds)
+```
+
+```{r}
+ggplot(preds, aes(x = rank, y = h2o_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth()
+
+ggplot(preds, aes(x = PAR, y = h2o_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = nextSeasonPAR, y = h2o_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+preds %>% 
+  arrange(-h2o_preds) %>% 
+  select(Name, rank, team.x, position.x, PAR, h2o_preds)
+
+posranks <- preds %>% 
+  group_by(position) %>% 
+  arrange(rank) %>% 
+  mutate(espn_pos_rank = row_number()) %>% 
+  arrange(-h2o_preds) %>% 
+  mutate(predicted_pos_rank = row_number()) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_pos_rank = row_number()) %>% 
+  select(Name, rank, team.x, espn_pos_rank, predicted_pos_rank, actual_pos_rank)
+
+
+posranks %>% 
+  ggplot(., aes(x = actual_pos_rank, y = espn_pos_rank)) +
+  geom_point(color = 'red') +
+  geom_point(aes(y = predicted_pos_rank), color = 'blue') +
+  facet_wrap(~position) +
+  geom_line(aes(y = actual_pos_rank)) +
+  xlim(c(0,50))
+
+
+ggcorrmat(
+  data=posranks
+)
+```
+
+```{r}
+preds2020$rf_preds <- predict(rf2020, preds2020)
+
+preds2020 %>% arrange(-rf_preds) %>% select(nextSeasonPAR, rf_preds, everything())
+
+preds2020$actual_rank <- preds2020 %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_rank = row_number()) %>%
+  .$actual_rank
+
+preds2020$espn_rank <- preds2020$rank
+
+
+preds2020$predicted_rank <- preds2020 %>% 
+  arrange(-rf_preds) %>% 
+  mutate(pred_rank = row_number()) %>% 
+  .$pred_rank
+
+
+ggcorrmat(preds2020 %>% select(Name, espn_rank, predicted_rank, actual_rank))
+```
+
+```{r}
+preds2021$rf_preds <- predict(rf2021, preds2021)
+
+preds2021 %>% arrange(-rf_preds) %>% select(nextSeasonPAR, rf_preds, everything())
+
+preds2021$actual_rank <- preds2021 %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_rank = row_number()) %>%
+  .$actual_rank
+
+preds2021$espn_rank <- preds2021$rank
+
+
+preds2021$predicted_rank <- preds2021 %>% 
+  arrange(-rf_preds) %>% 
+  mutate(pred_rank = row_number()) %>% 
+  .$pred_rank
+
+
+ggcorrmat(preds2021 %>% select(Name, espn_rank, predicted_rank, actual_rank))
+```
+
+
+h20 gbm
+```{r}
+gbm <- h2o.gbm(y = y,
+                  training_frame = train_h,
+                  max_runtime_secs = 60,
+                  nfolds = 6,
+                  seed = 1,
+                  weights_column = 'years_from_season')
+
+
+
+preds_gbm <- h2o.predict(gbm, preds_h)
+
+preds$gbm_preds <- as.vector(unlist(preds_gbm))
+
+ggplot(preds, aes(x = rank, y = gbm_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth()
+
+ggplot(preds, aes(x = PAR, y = gbm_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+ggplot(preds, aes(x = nextSeasonPAR, y = gbm_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+preds %>% 
+  arrange(-gbm_preds) %>% 
+  select(Name, rank, team.x, position.x, PAR, gbm_preds)
+
+posranks <- preds %>% 
+  group_by(position) %>% 
+  arrange(rank) %>% 
+  mutate(espn_pos_rank = row_number()) %>% 
+  arrange(-gbm_preds) %>% 
+  mutate(predicted_pos_rank = row_number()) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_pos_rank = row_number()) %>% 
+  select(Name, rank, team.x, espn_pos_rank, predicted_pos_rank, actual_pos_rank)
+
+
+posranks %>% 
+  ggplot(., aes(x = actual_pos_rank, y = espn_pos_rank)) +
+  geom_point(color = 'red') +
+  geom_point(aes(y = predicted_pos_rank), color = 'blue') +
+  facet_wrap(~position) +
+  geom_line(aes(y = actual_pos_rank)) +
+  xlim(c(0,50))
+
+ggcorrmat(
+  data=posranks
+)
+ggplot(preds, aes(x = h2o_preds, y = gbm_preds, color = nextSeasonPAR)) +
+  geom_point() +
+  theme_minimal() +
+  scale_color_viridis_c()
+
+
+as.vector(unlist(h2o.predict(leader, train_h)))
+
+sqrt(sum(as.vector(unlist(h2o.predict(leader, train_h))) - train$nextSeasonPAR)^2 / nrow(train))
+sqrt(sum(preds$gbm_preds - preds$nextSeasonPAR)^2 / nrow(preds))
+
+max(train_h$year)
+
+```
+```{r}
+preds %>% 
+  ggplot(., aes(x = rank, y = gbm_preds - nextSeasonPAR)) +
+  geom_point() +
+  geom_smooth()
+
+posranks <- preds %>% 
+  filter(rank <= 50) %>% 
+  group_by(position) %>% 
+  arrange(rank) %>% 
+  mutate(espn_pos_rank = row_number()) %>% 
+  arrange(-gbm_preds) %>% 
+  mutate(predicted_pos_rank = row_number()) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_pos_rank = row_number()) %>% 
+  select(Name, rank, team.x, espn_pos_rank, predicted_pos_rank, actual_pos_rank) 
+
+posranks <- preds %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(top_50 = row_number()) %>% 
+  filter(top_50 <= 50) %>% 
+  group_by(position) %>% 
+  arrange(rank) %>% 
+  mutate(espn_pos_rank = row_number()) %>% 
+  arrange(-gbm_preds) %>% 
+  mutate(predicted_pos_rank = row_number()) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(actual_pos_rank = row_number()) %>% 
+  select(Name, rank, team.x, espn_pos_rank, predicted_pos_rank, actual_pos_rank) 
+
+
+ggcorrmat(
+  data= posranks
+)
+
+posranks %>% 
+  ggplot(., aes(x = predicted_pos_rank, y = actual_pos_rank)) +
+  geom_point() +
+  facet_wrap(~position)
+```
+
+
+
+```{r}
+h2o.varimp_plot(leader)
+varimp <- data.frame(h2o.varimp(gbm))
+varimp$variable
+h2o.residual_analysis_plot(h2o.getModel(f[1]), test_h)
+h2o.model_correlation_heatmap(aml, test_h)
+h2o.shap_summary_plot(aml@leader, test_h)
+h2o.shap_explain_row_plot(aml2@leader, test_h, row_index = which(preds$Name == 'JuJuSmithSchuster'), plot_type = 'breakdown')
+```
+
+```{r}
+h2o.pd_multi_plot(aml, test_h, 'rank')
+
+h2o.pd_plot(aml@leader, test_h, column = 'rank')
+h2o.pd_plot(aml@leader, test_h, column = 'PAR')
+h2o.pd_plot(aml@leader, test_h, column = 'isRookie')
+h2o.pd_plot(aml@leader, test_h, column = 'depthChart')
+h2o.pd_plot(aml@leader, test_h, column = 'PAR_4')
+h2o.pd_plot(aml@leader, test_h, column = 'posrank')
+
+h2o.ice_plot(aml@leader, test_h, column = 'rank')
+```
+
+```{r}
+p <- c(0.025, 0.50, 0.975)
+q <- c(9.68, 29.2, 50.98)
+fit.results <- rriskFitdist.perc(p, q, show.output = FALSE)
+plotDiagnostics.perc(fit.results)
+
+fit.results
+
+
+percentiles <- quantile(modelData %>% filter(rank <= 10) %>% .$nextSeasonPAR, c(.1, .2, .4, .5, .6, .8, .9))
+  
+p <- c(.1, .2, .4, .5, .6, .8, .9)
+q <- unname(percentiles)
+fit.results <- rriskFitdist.perc(p, q, show.output = FALSE)
+plotDiagnostics.perc(fit.results)
+fit.results
+
+data.frame(values = rcauchy(1000, location = fit.results$results$cauchy[1], scale = fit.results$results$cauchy[2])) %>% 
+  ggplot(., aes(x = values)) +
+  geom_density(color = 'red') +
+  geom_density(data = modelData %>% filter(rank <= 10), aes(x = nextSeasonPAR)) +
+  xlim(c(-400, 300))
+
+data.frame(values = rnorm(1000, fit.results$results$norm[1], fit.results$results$norm[2])) %>% 
+  ggplot(., aes(x = values)) +
+  geom_density(color = 'red') +
+  geom_density(data = modelData %>% filter(rank <= 10), aes(x = nextSeasonPAR))
+
+```
+
+
+```{r}
+season <- 2020
+
+combo2 <- combo %>%
+  ungroup() %>% 
+  filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+  mutate(years_from_season = season - year, 
+         years_from_season = max(years_from_season) - years_from_season + 1)
+
+combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+  
+modelData <- combo2 %>% 
+    select(-c("Name", "team.y",
+              "position.y", "position.x",
+              "team.x", "nextSeasonsTeam",
+              "gsis_id", 
+              "team"))
+
+train <- modelData %>% filter(year < season)
+test <- modelData %>% filter(year == season)
+preds <- combo2 %>% filter(year == season)
+test_preds <- modelData %>% filter(year == season)
+```
+
+```{r}
+b <- modelData %>% 
+  filter(year < season) %>%
+  group_by(year) %>% 
+  arrange(-nextSeasonPAR) %>% 
+  mutate(next_season_rank = row_number())
+
+b$vals <- runif(n = nrow(b),0,1)
+
+
+train <- bind_rows(modelData %>% filter(year < season),
+                   b %>% filter(next_season_rank <= 50, 
+                                vals <= .5)) %>% 
+  select(-c(next_season_rank, vals))
+test <- b %>% filter(next_season_rank <= 50, 
+                                vals <= .5) %>% 
+  select(-c(next_season_rank, vals))
+
+```
+
+
+# ```{r}
+# season <- 2020
+# 
+# combo2 <- combo %>%
+#   ungroup() %>% 
+#   filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+#   mutate(years_from_season = season - year, 
+#          years_from_season = max(years_from_season) - years_from_season + 1)
+# 
+# combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+#   
+# modelData <- combo2 %>% 
+#   filter(year < season) %>% 
+#     select(-c("Name", "team.y",
+#               "position.y", "position.x",
+#               "team.x", "nextSeasonsTeam",
+#               "gsis_id", "team", "year"))
+# 
+# indeces <- sample(1:nrow(modelData), 0.8 * nrow(modelData))
+# train <- modelData[indeces,]
+# test <- modelData[-indeces,]
+# preds <- combo2 %>% filter(year == season)
+# test_preds <- combo2 %>% 
+#   filter(year == season) %>% 
+#   select(-c("Name", "team.y",
+#               "position.y", "position.x",
+#               "team.x", "nextSeasonsTeam",
+#               "gsis_id", "team", "year"))
+# 
+# ```
+
+```{r}
+train_h = as.h2o(train)
+test_h = as.h2o(test)
+preds_h = as.h2o(test_preds)
+# set label type
+y = 'nextSeasonPAR'
+x = setdiff(names(train), y)
+#convert variables to factors
+aml <- h2o.automl(y = y,
+                  x = x,
+                  training_frame = train_h,
+                  validation_frame = test_h,
+                  nfolds = 6,
+                  seed = 1,
+                  max_runtime_secs = 1000,
+                  weights_column = 'years_from_season',
+                  keep_cross_validation_predictions = TRUE)
+# AutoML Leaderboard
+lb = aml@leaderboard
+as.data.frame(lb)
+f <- as.data.frame(lb) %>% 
+  filter(grepl('Stacked', model_id)) %>% 
+  .$model_id
+ensemble <- h2o.getModel(f[1])
+leader <- aml@leader
+# prediction result on test data
+preds_water_ensemble <- h2o.predict(ensemble, preds_h)
+preds_water <- h2o.predict(leader, preds_h)
+
+preds$h2o_preds <- as.vector(unlist(preds_water_ensemble))
+preds$gbm_preds <- as.vector(unlist(preds_water))
+
+preds %>% 
+  arrange(-h2o_preds)
+
+preds %>% 
+  arrange(-gbm_preds) %>% 
+  select(Name, rank, team.x, position.x, PAR, nextSeasonPAR, h2o_preds, gbm_preds)
+
+```
+
+
+
+# ```{r}
+# #library(h2o)
+# # start h2o cluster
+# #invisible(h2o.init())
+# # convert data as h2o type
+# train_h = as.h2o(train)
+# test_h = as.h2o(test)
+# preds_h = as.h2o(test_preds)
+# # set label type
+# y = 'nextSeasonPAR'
+# x = setdiff(names(train), y)
+# #convert variables to factors
+# gbms <- h2o.automl(y = y,
+#                   x = x,
+#                   training_frame = train_h,
+#                   nfolds = 6,
+#                   seed = 1,
+#                   max_runtime_secs = 60,
+#                   weights_column = 'years_from_season',
+#                   stopping_metric = 'RMSE',
+#                   sort_metric = 'RMSE',
+#                   project_name = 'test9',
+#                   keep_cross_validation_predictions = TRUE, 
+#                   include_algos = c("GBM"))
+# gbm_1 <- gbms@leader
+# 
+# xgboosts <- h2o.automl(y = y,
+#                   x = x,
+#                   training_frame = train_h,
+#                   nfolds = 6,
+#                   seed = 1,
+#                   max_runtime_secs = 60,
+#                   weights_column = 'years_from_season',
+#                   stopping_metric = 'RMSE',
+#                   sort_metric = 'RMSE',
+#                   project_name = 'test9',
+#                   keep_cross_validation_predictions = TRUE, 
+#                   include_algos = c("XGBoost"))
+# xgb_1 <- xgboosts@leader
+# 
+# rfs <- h2o.automl(y = y,
+#                   x = x,
+#                   training_frame = train_h,
+#                   nfolds = 6,
+#                   seed = 1,
+#                   max_runtime_secs = 60,
+#                   weights_column = 'years_from_season',
+#                   stopping_metric = 'RMSE',
+#                   sort_metric = 'RMSE',
+#                   project_name = 'test9',
+#                   keep_cross_validation_predictions = TRUE, 
+#                   include_algos = c("DRF"))
+# rf_1 <- rfs@leader
+# 
+# # Train a stacked ensemble using the GBM XGBoost and RF
+# ensemble <- h2o.stackedEnsemble(x = x,
+#                                 y = y,
+#                                 training_frame = train_h,
+#                                 model_id = "my_ensemble_simple",
+#                                 base_models = list(gbm_1@model_id, rf_1@model_id, xgb_1@model_id))
+# 
+# # AutoML Leaderboard
+# gbm@leaderboard
+# 
+# # prediction result on test data
+# preds_water <- h2o.predict(ensemble, preds_h)
+# 
+# preds$h2o_preds <- as.vector(unlist(preds_water))
+# ```
+
+```{r}
+ggplot(preds, aes(x = rank, y = h2o_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth()
+
+ggplot(preds, aes(x = PAR, y = h2o_preds, color = position)) +
+  geom_point() +
+  facet_wrap(~position) +
+  geom_smooth(method = 'lm')
+
+preds %>% 
+  arrange(-h2o_preds) %>% 
+  select(Name, rank, team.x, position.x, PAR, h2o_preds)
+```
+
+<!-- ```{r} -->
+<!-- # Train & Cross-validate a GBM -->
+<!-- my_gbm <- h2o.gbm(x = x, -->
+<!--                   y = y, -->
+<!--                   training_frame = train_h, -->
+<!--                   ntrees = 10, -->
+<!--                   max_depth = 3, -->
+<!--                   min_rows = 2, -->
+<!--                   learn_rate = 0.2, -->
+<!--                   nfolds = 6, -->
+<!--                   fold_assignment = "Modulo", -->
+<!--                   keep_cross_validation_predictions = TRUE, -->
+<!--                   seed = 1) -->
+
+<!-- # Train & Cross-validate a RF -->
+<!-- my_rf <- h2o.randomForest(x = x, -->
+<!--                           y = y, -->
+<!--                           training_frame = train_h, -->
+<!--                           ntrees = 50, -->
+<!--                           nfolds = 6, -->
+<!--                           fold_assignment = "Modulo", -->
+<!--                           keep_cross_validation_predictions = TRUE, -->
+<!--                           seed = 1) -->
+
+<!-- # Train a stacked ensemble using the GBM and RF above -->
+<!-- ensemble <- h2o.stackedEnsemble(x = x, -->
+<!--                                 y = y, -->
+<!--                                 training_frame = train_h, -->
+<!--                                 model_id = "my_ensemble_simple", -->
+<!--                                 base_models = list(my_gbm@model_id, my_rf@model_id)) -->
+
+<!-- preds_water <- h2o.predict(ensemble, preds_h) -->
+
+<!-- preds$h2o_preds <- as.vector(unlist(preds_water)) -->
+<!-- preds %>%  -->
+<!--   arrange(-h2o_preds) -->
+<!-- ``` -->
+
+```{r}
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'RussellWilson'))
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'ChristianMcCaffrey'))
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'AustinEkeler'))
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'AlvinKamara'))
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'DavanteAdams'))
+
+h2o.pd_multi_plot(ensemble, train_h, 'rank')
+
+h2o.pd_plot(ensemble, preds_h, column = 'rank')
+h2o.pd_plot(aml@leader, preds_h, column = 'PAR')
+h2o.pd_plot(ensemble, test_h, column = 'isRookie')
+h2o.pd_plot(aml@leader, test_h, column = 'depthChart')
+h2o.pd_plot(aml@leader, test_h, column = 'PAR_4')
+h2o.pd_plot(ensemble, test_h, column = 'posrank')
+
+h2o.ice_plot(aml@leader, test_h, column = 'rank')
+```
+
+```{r}
+h2o.varimp_plot(aml@leader)
+varimp <- data.frame(h2o.varimp(gbm))
+varimp
+h2o.residual_analysis_plot(aml@leader, train_h)
+h2o.shap_summary_plot(aml@leader, train_h)
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = 6, plot_type = 'breakdown')
+h2o.shap_explain_row_plot(aml@leader, preds_h, row_index = which(preds$Name == 'KenyanDrake'), plot_type = 'breakdown')
+preds[16,]
+
+which(preds$Name == 'AustinEkeler')
+```
+
+
+```{r}
+gbm80 <- h2o.gbm(y = y,
+                  training_frame = train_h,
+                  max_runtime_secs = 60,
+                  nfolds = 6,
+                  seed = 1,
+                  distribution = 'quantile',
+                  quantile_alpha = .8,
+                  weights_column = 'years_from_season')
+
+gbm20 <- h2o.gbm(y = y,
+                  training_frame = train_h,
+                  max_runtime_secs = 60,
+                  nfolds = 6,
+                  seed = 1,
+                  distribution = 'quantile',
+                  quantile_alpha = .2,
+                  weights_column = 'years_from_season')
+
+gbm95 <- h2o.gbm(y = y,
+                  training_frame = train_h,
+                  max_runtime_secs = 60,
+                  nfolds = 6,
+                  seed = 1,
+                  distribution = 'quantile',
+                  quantile_alpha = .95,
+                  weights_column = 'years_from_season')
+
+gbm05 <- h2o.gbm(y = y,
+                  training_frame = train_h,
+                  max_runtime_secs = 60,
+                  nfolds = 6,
+                  seed = 1,
+                  distribution = 'quantile',
+                  quantile_alpha = .05,
+                  weights_column = 'years_from_season')
+
+
+
+preds_gbm80 <- h2o.predict(gbm80, preds_h)
+preds_gbm20 <- h2o.predict(gbm20, preds_h)
+preds_gbm95 <- h2o.predict(gbm95, preds_h)
+preds_gbm05 <- h2o.predict(gbm05, preds_h)
+
+preds$p80 <- as.vector(unlist(preds_gbm80))
+preds$p20 <- as.vector(unlist(preds_gbm20))
+preds$p95 <- as.vector(unlist(preds_gbm95))
+preds$p05 <- as.vector(unlist(preds_gbm05))
+
+preds <- preds %>% 
+  mutate(p80 = if_else(h2o_preds >= p80, h2o_preds + (h2o_preds - p20), p80),
+         p95 = if_else(p80 >= p95, h2o_preds + (h2o_preds - p05), p95),
+         p20 = if_else(h2o_preds <= p20, h2o_preds - (p80 - h2o_preds), p20),
+         p05 = if_else(p20 <= p05, h2o_preds - (p95 - h2o_preds), p05))
+
+preds <- preds %>% 
+  mutate(p80 = if_else(h2o_preds >= p80, h2o_preds + (h2o_preds - p20), p80),
+         p95 = if_else(p80 >= p95, p80 + (p20 - p05), p95),
+         p20 = if_else(h2o_preds <= p20, h2o_preds - (p80 - h2o_preds), p20),
+         p05 = if_else(p20 <= p05, p20 - (p95 - p80), p05))
+
+
+preds %>% 
+  ggplot(., aes(x = rank, y = h2o_preds)) +
+  geom_point(color = 'red', size = 2) +
+  geom_point(aes(y = p80)) +
+  geom_point(aes(y = p20)) +
+  geom_point(aes(y = p05)) +
+  geom_point(aes(y = p95)) +
+facet_wrap(~depthChart) +
+  theme_bw()
+
+modelData %>% 
+  filter(year == 2020) %>% 
+  select(depthChart)
+```
+
+
+```{r}
+const_adjust_to_positive <- min(preds$p05) - .01
+r <- preds[1,]
+r <- r %>% 
+  mutate(p05 = p05 - const_adjust_to_positive, 
+         p20 = p20 - const_adjust_to_positive, 
+         p80 = p80 - const_adjust_to_positive,
+         p95 = p95 - const_adjust_to_positive)
+p <- c(.05, .2, .8, .95)
+q <- c(r$p05, r$p20, r$p80, r$p95)
+fit.results <- rriskFitdist.perc(p, q, show.output = FALSE)
+plotDiagnostics.perc(fit.results)
+fit.results
+dist <- rlogis(500, fit.results$results$logis[1], fit.results$results$logis[2])
+wide <- data.frame(t(data.frame(values = dist)))
+wide$Name <- r$Name
+wide$position <- r$position
+wide$middle_pred <- r$h2o_preds
+
+data.frame(values = dist) %>% 
+  ggplot(., aes(x = values)) +
+  geom_density(color = 'red') +
+  geom_point(data = r, aes(y = 0, x = h2o_preds))
+
+aml@leader
+```
+
+```{r}
+individuals <- data.frame()
+i = 18
+for (i in 1:nrow(preds)) {
+  r <- preds[i,]
+  p <- c(.05, .2, .8, .95)
+  q <- c(r$p05, r$p20, r$p80, r$p95) - const_adjust_to_positive
+  fit.results <- rriskFitdist.perc(p, q, show.output = FALSE)
+  dist <- rlnorm(500, log(r$h2o_preds - const_adjust_to_positive), fit.results$results$lnorm[2])
+  wide <- data.frame(t(data.frame(values = dist)))
+  wide$Name <- r$Name
+  wide$position <- r$position
+  wide$middle_rf <- r$h2o_preds
+  
+  individuals <- bind_rows(individuals, wide)
+}
+individuals <- individuals %>% 
+  group_by(position) %>% 
+  arrange(-middle_rf) %>% 
+  mutate(teamRank = row_number())
+preds$middle_rf <- preds$h2o_preds
+
+preds %>% 
+  arrange(-middle_rf)
+
+preds_copy %>% 
+  arrange(-middle_rf)
+
+ggplot(train, aes(x = PAR)) +
+  geom_histogram(aes(log(PAR))) 
+
+ggplot(train, aes(x = PAR)) +
+  geom_histogram()
+
+which(preds$Name == 'JoshAllen')
+```
+
+
+```{r}
+dist_df <- data.frame()
+for (i in 36:99) {
+  p <- i/100
+  model <- h2o.gbm(y = y,
+        training_frame = train_h,
+        max_runtime_secs = 60,
+        nfolds = 6,
+        seed = 1,
+        distribution = 'quantile',
+        quantile_alpha = p,
+        weights_column = 'years_from_season')
+  
+  pred_list <- as.vector(unlist(h2o.predict(model, preds_h)))
+  rows <- data.frame(Name = preds$Name,
+                    team = preds$team,
+                    position = preds$position,
+                    rank = preds$rank,
+                    prediction = pred_list,
+                    p = p
+                    )
+  
+  dist_df <- bind_rows(dist_df, rows)
+  print(p)
+}
+
+
+dist_df %>% 
+  filter(Name %in% c('ChristianMcCaffrey',
+                     'AlvinKamara', 
+                     'BostonScott')) %>% 
+  ggplot(., aes(y = p, x = prediction, color = Name)) +
+  geom_point() +
+  geom_smooth() +
+  ylim(c(0,1))
+
+
+dist_df %>% 
+  filter(rank <= 5) %>%  
+  ggplot(., aes(x = prediction, y = p, color = Name)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~position) +
+  ylim(c(0,1))
+
+
+dist_df %>% 
+  filter(Name %in% c('PatrickMahomes',
+                     'RussellWilson', 
+                     'LamarJackson',
+                     'JaredGoff',
+                     'AlvinKamara')) %>% 
+  ggplot(., aes(x = prediction, y = p, color = Name)) +
+  geom_point() +
+  geom_smooth() +
+  ylim(c(0,1))
+
+pdf <- data.frame()
+i = 'ScottyMiller'
+for (i in unique(dist_df$Name)) {
+  player_frame <- dist_df[dist_df$Name == 'i',]
+  smooth <- loess(p ~ prediction, data = kamara, span = .5)
+  rows <- data.frame(Name = i,
+             prediction = round(min(dist_df$prediction)):round(max(dist_df$prediction)),
+             quantile = predict(smooth,
+                              data.frame(prediction = round(min(dist_df$prediction)):round(max(dist_df$prediction))))) %>% mutate(lag = lag(quantile),
+                                                                                                                                  improvement = quantile - lag(quantile),
+                                                                                                                                  improvement = if_else(improvement < 0, 0, improvement))
+  pdf <- bind_rows(pdf, rows)
+}
+```
+
+
+```{r}
+h2o.shutdown(prompt = F)
+h2o.init()
+```
+
+```{r}
+devtools::install_github("stan-dev/cmdstanr")
+devtools::install_github("rmcelreath/rethinking")
+```
+
+```{r}
+library(rethinking)
+```
+
+```{r}
+train_scale <- data.frame(scale(train %>% 
+        select(nextSeasonPAR, PAR)))
+m1 <- map2stan(
+  alist(
+    nextSeasonPAR ~ dnorm(mu, sigma),
+    mu <- a + b*PAR,
+    a <- dnorm(0,5),
+    b <- dnorm(0,5),
+    sigma ~ dnorm(0,5)
+  ),
+  data=train_scale
+)
+```
+
+```{r}
+precis(m1)
+```
+
+```{r}
+post <- extract.samples(m1)
+str(post)
+a <- data.frame(v = post$a)
+
+
+ggplot(data = a, aes(x = v)) +
+  geom_density()
+
+pairs(post)
+pairs(m1)
+plot(m1)
+```
+```{r}
+postcheck(m1)
+```
+
+```{r}
+log_pop.seq <- seq(from=-300,to=300)
+new_data <- data.frame(PAR=log_pop.seq)
+lambda <- link(m1,data=new_data,n=9000)
+lambda.mean <- apply(lambda,2,mean)
+lambda.HPDI <- apply(lambda,2,HPDI)
+tt.sim <- sim(m1,data=new_data,n=9000)
+tt.HPDI <- apply(tt.sim,2,HPDI)
+plot( nextSeasonPAR ~ PAR , data=train_scale , pch=16 , col=rangi2 )
+lines( log_pop.seq , lambda.mean )
+shade( lambda.HPDI , log_pop.seq )
+shade( tt.HPDI , log_pop.seq )
+```
+
+#m2
+```{r}
+train_scale <- data.frame(
+  scale(
+    train %>%
+      mutate(espn_rank = rank) %>% 
+      select(nextSeasonPAR, PAR, espn_rank)
+    )
+  )
+m2 <- map2stan(
+  alist(
+    nextSeasonPAR ~ dnorm(mu, sigma),
+    mu <- a + b*PAR + c*espn_rank,
+    a <- dnorm(0,5),
+    b <- dnorm(0,5),
+    c <- dnorm(0,5),
+    sigma ~ dnorm(0,5)
+  ),
+  data=train_scale
+)
+```
+
+```{r}
+precis(m2)
+post <- extract.samples(m2)
+str(post)
+a <- data.frame(v = post$a)
+
+
+ggplot(data = a, aes(x = v)) +
+  geom_density()
+
+pairs(post)
+pairs(m2)
+plot(m2)
+```
+
+```{r}
+log_pop.seq <- seq(from=-3,to=3, length.out = 600)
+rank_seq <- seq(from = -3, to=3, length.out = 600)
+new_data <- data.frame(PAR=log_pop.seq, espn_rank = rank_seq)
+lambda <- link(m2,data=train_scale,n=9000)
+lambda.mean <- apply(lambda,2,mean)
+lambda.HPDI <- apply(lambda,2,HPDI)
+tt.sim <- sim(m2,data=train_scale,n=9000)
+tt.HPDI <- apply(tt.sim,2,HPDI)
+plot( nextSeasonPAR ~ PAR , data=train_scale , pch=16 , col=rangi2 )
+lines( log_pop.seq , lambda.mean )
+shade( lambda.HPDI , log_pop.seq )
+shade( tt.HPDI , log_pop.seq )
+
+train_scale$lambda_mean = lambda.mean 
+train_scale$lambda_hpdi_l = lambda.HPDI[1,]
+train_scale$lambda_hpdi_h = lambda.HPDI[2,]
+
+ggplot(train_scale, aes(x = lambda_mean, y = nextSeasonPAR)) +
+  geom_point(color = rangi2) +
+  theme_minimal()
+
+ggplot(train_scale, aes(x = PAR, y = lambda_mean)) +
+  geom_point(color = rangi2) +
+  theme_minimal()
+
+ggplot(train_scale, aes(x = espn_rank, y = lambda_mean)) +
+  geom_point(color = rangi2) +
+  theme_minimal()
+
+ggplot(train_scale, aes(x = lambda_mean, y = nextSeasonPAR - lambda_mean)) +
+  geom_point(color = rangi2) +
+  theme_minimal() +
+  geom_smooth(method = 'lm')
+```
+
+
+```{r}
+library(gt)
+```
+
+```{r}
+secondDataframe %>% 
+  select(Name, position, total_pt_gains, PAR) %>% 
+  mutate(total_pt_gains = round(total_pt_gains, 1), 
+         PAR = round(PAR, 1)) %>% 
+  filter(Name %in% c(
+    'JoeMixon', 
+    'DAndreSwift', 
+    'JonathanTaylor',
+    'DavanteAdams',
+    'JaMarrChase',
+    'CooperKupp',
+    'PatrickMahomes', 
+    'JustinHerbert',
+    'JoshAllen',
+    'TravisKelce',
+    'MarkAndrews',
+    'GeorgeKittle'
+  )) %>% 
+  group_by(position) %>% 
+  gt(rowname_col = Name) %>% 
+  cols_label(
+    total_pt_gains = 'Total Positive Production'
+  ) %>% 
+  tab_style(
+     locations = cells_column_labels(columns = everything()),
+     style     = list(
+       #Give a thick border below
+       cell_borders(sides = "bottom", weight = px(3)),
+       #Make text bold
+       cell_text(weight = "bold")
+     )
+   )
+```
+
+```{r}
+library(ggrepel)
+```
+
+```{r}
+preds %>% 
+  ggplot(., aes(x = rank, y = rf_preds, color = position)) +
+  geom_point(alpha = .2) +
+  facet_wrap(~position) +
+  theme_bw() +
+  geom_text_repel(data = . %>% 
+                     filter(Name %in% c(
+    'DarrelWilliams', 
+    'DamienHarris', 
+    'JoshJacobs',
+    'AmonRaSt', 
+    'HunterRenfrow', 
+    'TylerLockett', 
+    'JoeBurrow',
+    'MatthewStafford', 
+    'TomBrady',
+    'MikeGesicki', 
+    'TylerHigbee',
+    'TylerConklin'
+  )
+  ),
+  aes(label = Name,),
+  size = 2) +
+  guides(color = FALSE)
+```
+
+
