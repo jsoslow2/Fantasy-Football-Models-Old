@@ -1,0 +1,2097 @@
+
+
+#initialize your league's rules
+```{r}
+numberOfTeams <- 10
+
+isFlex <- TRUE
+
+ppr <- 1
+rushYards <- .1
+receivingYards <- .1
+rushTD <- 6
+receivingTD <- 6
+passYards <- 1/25
+passTD <- 4
+fmb <- -2
+int <- -2
+```
+
+```{r}
+library(nflreadr)
+library(keras)
+library(RColorBrewer)
+library(ggridges)
+library(hms)
+library(shiny)
+library(DT)
+library(tidyverse)
+library(rvest)
+library(stringr)
+library(stringdist)
+library(randomForest)
+library(Matrix)
+library(lubridate)
+library(glmnet)
+library(caret)
+library(pls)
+library(nflscrapR)
+library(magrittr)
+library(Metrics)
+library(xgboost)
+library(pdp)
+library(vip)
+library(ggstatsplot)
+library(randomForestExplainer)
+library(iBreakDown)
+library(DALEX)
+library(rriskDistributions)
+library(h2o)
+```
+
+
+
+
+
+#ESPN Data
+```{r}
+espnProjections <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2019%20ESPN%20fantasy%20projections%20new.csv")
+espnADP <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/adp/2019%20espn%20adp.csv")
+
+nflELO <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/team%20elo%20data/nfl_elo.csv")
+
+projections2010 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2010%20fantasy%20projections.csv")
+#couldn't get 2011 projections
+projections2012 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2012%20fantasy%20projections.csv")
+projections2013 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2013%20fantasy%20projections.csv")
+projections2014 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2014%20fantasy%20projections.csv")
+projections2015 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2015%20fantasy%20projections.1.csv")
+projections2016 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2016%20fantasy%20projections.csv")
+projections2017 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2017%20projections%20new.csv")
+projections2018 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2018%20projections%20new%20new.csv")
+projections2019 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2019%20ppr%20ranks%20-%202019%20ppr%20ranks.csv.csv")
+projections2020 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2020%20projections%20updated%20-%20ff%202020%20projections%20positional.csv")
+projections2021 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2021%20projections%20-%202021%20projections%20pdf.csv.csv")
+projections2022 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/projections/2022%20nfl%20projections%20-%20nfl%20ppr%202022%20rankings.csv.csv")
+
+
+depthChart2022 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2022%20depth%20charts%20-%202022%20depth%20charts.csv.csv")
+depthChart2021 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2021%20depth%20charts%20-%202021%20depth%20charts.csv.csv")
+depthChart2020 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2020%20depth%20charts%20-%20NFLDK2020_CS_PPR_DepthChart.csv")
+depthChart2019 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2019%20espn%20depth%20charts.csv")
+depthChart2018 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2018%20depth%20charts.1.csv")
+depthChart2017 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2017%20depth%20charts.1.csv")
+depthChart2016 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2016%20depth%20charts.csv")
+depthChart2015 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2015%20depth%20charts.csv")
+depthChart2014 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2014%20depth%20charts.csv")
+depthChart2012 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2012%20depth%20charts.csv")
+depthChart2010 <- read_csv("https://raw.githubusercontent.com/jsoslow2/Fantasy-Football-Models/master/data/depth%20charts/2010%20depth%20charts.1.csv")
+```
+#Clean ESPN Projections Table [COMMENTED OUT]
+```{r}
+# teams <- c()
+# names <- c()
+# positions <- c()
+# 
+# splittingStrings <- strsplit(espnProjections$Name, split = "\n")
+# 
+# for (i in 1:length(splittingStrings)) {
+#   name <- splittingStrings[[i]][1]
+#   teamPosition <- splittingStrings[[i]][2]
+#   team <- str_sub(teamPosition, 1, -3)
+#   position <- str_sub(teamPosition, -2, -1)
+#   
+#   
+#   names <- c(names, name)
+#   teams <- c(teams, team)
+#   positions <- c(positions, position)
+# }
+# 
+# espnProjections$Name <- names
+# espnProjections$Team <- teams
+# espnProjections$position <- positions
+# 
+# #clean injuries out of name
+# espnProjections$isQuestionable <- 0
+# espnProjections$isOut <- 0
+# espnProjections$isSuspended <- 0
+# espnProjections$isDoubtful <- 0 
+# espnProjections$injuredReserve <- 0
+# 
+# questionables <- grepl("^.+(Q)$",espnProjections$Name)
+# suspended <- grepl("^.+(SSPD)$",espnProjections$Name)
+# out <- grepl("^.+(O)$",espnProjections$Name)
+# doubtful <- grepl("^.+(D)$",espnProjections$Name)
+# injuredReserve <- grepl("^.+(IR)$",espnProjections$Name)
+# 
+# 
+# espnProjections[questionables,]$Name <- str_sub(espnProjections[questionables,]$Name, 1, -2)
+# espnProjections[questionables,]$isQuestionable <- 1
+# 
+# espnProjections[suspended,]$Name <- str_sub(espnProjections[suspended,]$Name, 1, -4)
+# espnProjections[suspended,]$isSuspended <- 1
+# 
+# espnProjections[out,]$Name <- str_sub(espnProjections[out,]$Name, 1, -2)
+# espnProjections[out,]$isOut <- 1
+# 
+# espnProjections[doubtful,]$Name <- str_sub(espnProjections[doubtful,]$Name, 1, -2)
+# espnProjections[doubtful,]$isDoubtful <- 1
+# 
+# espnProjections[injuredReserve,]$Name <- str_sub(espnProjections[injuredReserve,]$Name, 1, -3)
+# espnProjections[injuredReserve,]$injuredReserve <- 1
+```
+
+#Clean ADP
+```{r}
+teams <- c()
+names <- c()
+positions <- c()
+
+splittingStrings <- strsplit(espnADP$Name, split = "\n")
+
+for (i in 1:length(splittingStrings)) {
+  name <- splittingStrings[[i]][1]
+  teamPosition <- splittingStrings[[i]][2]
+  team <- str_sub(teamPosition, 1, -3)
+  position <- str_sub(teamPosition, -2, -1)
+  
+  
+  names <- c(names, name)
+  teams <- c(teams, team)
+  positions <- c(positions, position)
+}
+
+
+espnADP$Name <- names
+espnADP$Team <- teams
+espnADP$position <- positions
+
+espnADP[espnADP$position == "ST",]$Team <- str_sub(espnADP[espnADP$position == "ST",]$Team, 1, -3)
+
+
+#Clean injuries out of name
+espnADP$isQuestionable <- 0
+espnADP$isOut <- 0
+espnADP$isSuspended <- 0
+espnADP$isDoubtful <- 0 
+
+questionables <- grepl("^.+(Q)$",espnADP$Name)
+suspended <- grepl("^.+(SSPD)$",espnADP$Name)
+out <- grepl("^.+(O)$",espnADP$Name)
+doubtful <- grepl("^.+(D)$",espnADP$Name)
+
+
+
+espnADP[questionables,]$Name <- str_sub(espnADP[questionables,]$Name, 1, -2)
+espnADP[questionables,]$isQuestionable <- 1
+
+espnADP[suspended,]$Name <- str_sub(espnADP[suspended,]$Name, 1, -4)
+espnADP[suspended,]$isSuspended <- 1
+
+espnADP[out,]$Name <- str_sub(espnADP[out,]$Name, 1, -2)
+espnADP[out,]$isOut <- 1
+
+espnADP[doubtful,]$Name <- str_sub(espnADP[doubtful,]$Name, 1, -2)
+espnADP[doubtful,]$isDoubtful <- 1
+```
+
+Combine all past projections tables
+```{r}
+#2010
+projections2010$Name <- ""
+projections2010$team <- ""
+
+split_strings <- str_split(projections2010$rank, " ")
+split_strings2 <- str_split(projections2010$`name,team`, " ")
+split_string3 <- str_split(projections2010$`name,team`, ",")
+
+i = 1
+for (i in 1:length(split_strings)) {
+  rank <- split_strings[[i]][2]
+  rank <- str_sub(rank, 2,-2)
+  
+  items <- length(split_strings2[[i]])
+  team <- split_strings2[[i]][items]
+  name <- split_string3[[i]][1]
+  
+  projections2010$rank[i] <- rank
+  projections2010$team[i] <- team
+  projections2010$Name[i] <- name
+  row <- projections2010[i,]
+  projections2010$Name[i][row$position == "ST"] <- paste(team, "D/ST", sep = " ")
+}
+projections2010$team[projections2010$position == "ST"][1] <- "NYJ"
+projections2010$team[projections2010$position == "ST"][2] <- "PHI"
+projections2010$team[projections2010$position == "ST"][3] <- "GB"
+projections2010$team[projections2010$position == "ST"][4] <- "BAL"
+projections2010$team[projections2010$position == "ST"][5] <- "DAL"
+projections2010$team[projections2010$position == "ST"][6] <- "SF"
+projections2010$team[projections2010$position == "ST"][7] <- "MIN"
+projections2010$team[projections2010$position == "ST"][8] <- "PIT"
+projections2010$team[projections2010$position == "ST"][9] <- "CIN"
+projections2010$team[projections2010$position == "ST"][10] <- "NO"
+projections2010$team[projections2010$position == "ST"][11] <- "DEN"
+projections2010$team[projections2010$position == "ST"][12] <- "NYG"
+projections2010$team[projections2010$position == "ST"][13] <- "NE"
+projections2010$team[projections2010$position == "ST"][14] <- "CLE"
+projections2010$team[projections2010$position == "ST"][15] <- "HOU"
+
+projections2010$rank <- as.integer(projections2010$rank)
+projections2010$year <- 2010
+projections2010 <- projections2010 %>%  arrange(as.numeric(rank))
+
+
+#2012
+projections2012$Name <- ""
+projections2012$team <- ""
+projections2012$position <- ""
+split_strings <- str_split(projections2012$`name, team`, ",")
+split_strings2 <- str_split(projections2012$`rank, position`, " ")
+i = 1 
+for (i in 1:nrow(projections2012)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2012$Name[i] <- name
+  projections2012$team[i] <- team
+  projections2012$position[i] <- position
+}
+projections2012$rank <- seq.int(nrow(projections2012))
+projections2012$year <- 2012
+
+#2013
+projections2013$Name <- ""
+projections2013$team <- ""
+projections2013$position <- ""
+split_strings <- str_split(projections2013$`name,team`, ",")
+split_strings2 <- str_split(projections2013$`rank,position`, " ")
+i = 1
+for (i in 1:nrow(projections2013)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2013$Name[i] <- name
+  projections2013$team[i] <- team
+  projections2013$position[i] <- position
+}
+projections2013$rank <- seq.int(nrow(projections2013))
+projections2013$year <- 2013
+
+#2014
+projections2014$Name <- ""
+projections2014$team <- ""
+projections2014$position <- ""
+split_strings <- str_split(projections2014$`Name, Team`, ",")
+split_strings2 <- str_split(projections2014$Rank, " ")
+i = 1
+for (i in 1:nrow(projections2014)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2014$Name[i] <- name
+  projections2014$team[i] <- team
+  projections2014$position[i] <- position
+}
+projections2014$rank <- seq.int(nrow(projections2014))
+projections2014$year <- 2014
+
+#2015
+projections2015$Name <- ""
+projections2015$team <- ""
+projections2015$position <- ""
+split_strings <- str_split(projections2015$`name team`, ",")
+split_strings2 <- str_split(projections2015$`position rank`, " ")
+i = 1
+for (i in 1:nrow(projections2015)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2015$Name[i] <- name
+  projections2015$team[i] <- team
+  projections2015$position[i] <- position
+}
+projections2015$rank <- seq.int(nrow(projections2015))
+projections2015$year <- 2015
+
+
+#2016
+projections2016$Name <- gsub("^.*?\\.", "",projections2016$`RANK, PLAYER`)
+projections2016 <- projections2016[2:5] %>% 
+  select(Name, everything())
+projections2016$rank <- seq.int(nrow(projections2016))
+projections2016$year <- 2016
+
+#2017
+projections2017$Name <- ""
+projections2017$team <- ""
+projections2017$position <- ""
+split_strings <- str_split(projections2017$NameTeam, ",")
+split_strings2 <- str_split(projections2017$positionRank, " ")
+i = 1 
+for (i in 1:nrow(projections2017)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2017$Name[i] <- name
+  projections2017$team[i] <- team
+  projections2017$position[i] <- position
+}
+projections2017$rank <- seq.int(nrow(projections2017))
+projections2017$year <- 2017
+
+#2018
+projections2018$Name <- gsub("^.*?\\.", "",projections2018$Player)
+projections2018 <- projections2018[2:5] %>% 
+  select(Name, everything())
+projections2018$rank <- seq.int(nrow(projections2018))
+projections2018$year <- 2018
+
+#2019
+projections2019$Name <- ""
+projections2019$team <- ""
+projections2019$position <- ""
+split_strings <- str_split(projections2019$`name team`, ",")
+split_strings2 <- str_split(projections2019$`position rank`, " ")
+i = 1
+for (i in 1:nrow(projections2019)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2019$Name[i] <- name
+  projections2019$team[i] <- team
+  projections2019$position[i] <- position
+}
+projections2019$rank <- seq.int(nrow(projections2019))
+projections2019$year <- 2019
+
+#2020
+projections2020$Name <- ""
+projections2020$team <- ""
+projections2020$position <- ""
+split_strings <- str_split(projections2020$NameTeam, ",")
+split_strings2 <- str_split(projections2020$Rank, " ")
+i = 1 
+for (i in 1:nrow(projections2020)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "DST"
+  
+  projections2020$Name[i] <- name
+  projections2020$team[i] <- team
+  projections2020$position[i] <- position
+  projections2020$Rank[i] <- posRank
+}
+projections2020$Rank <- as.numeric(projections2020$Rank)
+projections2020$year <- 2020 
+
+#2021
+projections2021$Name <- ""
+projections2021$team <- ""
+projections2021$position <- ""
+split_strings <- str_split(projections2021$`name team`, ",")
+split_strings2 <- str_split(projections2021$`position rank`, " ")
+i = 1
+for (i in 1:nrow(projections2021)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2021$Name[i] <- name
+  projections2021$team[i] <- team
+  projections2021$position[i] <- position
+}
+projections2021$rank <- seq.int(nrow(projections2021))
+projections2021$year <- 2021
+
+#2021
+projections2022$Name <- ""
+projections2022$team <- ""
+projections2022$position <- ""
+split_strings <- str_split(projections2022$`name team`, ",")
+split_strings2 <- str_split(projections2022$`position rank`, " ")
+i = 1
+for (i in 1:nrow(projections2022)) {
+  name <- split_strings[[i]][1]
+  team <- split_strings[[i]][2]
+  team <- str_sub(team, 2, -1)
+  
+  posRank <- split_strings2[[i]][2]
+  posRank <- str_sub(posRank, 2, -2)
+  position <- str_extract(posRank, '\\D*(?=\\d)')
+  position[position == "DEF"] <- "ST"
+  
+  projections2022$Name[i] <- name
+  projections2022$team[i] <- team
+  projections2022$position[i] <- position
+}
+projections2022$rank <- seq.int(nrow(projections2022))
+projections2022$year <- 2022
+
+##FORMAT 
+##NAME TEAM POSITION YEAR RANK
+projections2010 <- projections2010 %>% 
+  select(Name, team, position, year, rank)
+
+projections2012 <- projections2012 %>% 
+  select(Name, team, position, year, rank)
+
+projections2013 <- projections2013 %>% 
+  select(Name, team, position, year, rank)
+
+projections2014 <- projections2014 %>% 
+  select(Name, team, position, year, rank)
+
+projections2015 <- projections2015 %>% 
+  select(Name, team, position, year, rank)
+
+projections2016 <- projections2016 %>% 
+  select(Name, 
+         TEAM,
+         POS,
+         year,
+         rank) %>% 
+  rename(team = TEAM,
+         position = POS)
+
+projections2017 <- projections2017 %>% 
+  select(Name, team, position, year, rank) 
+
+projections2018 <- projections2018 %>% 
+  select(Name, TEAM, POS, year, rank) %>% 
+  rename(team = TEAM,
+         position = POS)
+
+projections2019 <- projections2019 %>% 
+  select(Name, team, position, year, rank)
+
+projections2020 <- projections2020 %>% 
+  select(Name, team, Position, year, Rank) %>% 
+  dplyr::rename(position = Position,
+         rank = Rank)
+
+projections2021 <- projections2021 %>% 
+  select(Name, team, position, year, rank)
+
+projections2022 <- projections2022 %>% 
+  select(Name, team, position, year, rank)
+
+
+allProjections <- bind_rows(projections2010, projections2012, projections2013, projections2014, projections2015, projections2016, projections2017, projections2018, projections2019, projections2020, projections2021, projections2022)
+```
+
+```{r}
+allProjections %>% 
+  filter(year == 2021)
+```
+
+
+
+#Clean Depth Charts
+```{r}
+#2022
+depthChart2022$Name <- ""
+splitty <- str_split(depthChart2022$`name rank`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2022$Name[i] <- name
+}
+depthChart2022$year <- 2022
+
+#2021
+depthChart2021$Name <- ""
+splitty <- str_split(depthChart2021$`name rank`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2021$Name[i] <- name
+}
+depthChart2021$year <- 2021
+
+#2020
+depthChart2020$Name <- ""
+splitty <- str_split(depthChart2020$`Name rank`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2020$Name[i] <- name
+}
+depthChart2020$year <- 2020
+
+#2019
+depthChart2019$Name <- ""
+splitty <- str_split(depthChart2019$`Name rank`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2019$Name[i] <- name
+}
+depthChart2019$year <- 2019
+
+#2018
+colnames(depthChart2018) <- c("depthChart", "nameRank", "team")
+depthChart2018 <- depthChart2018[-1,]
+depthChart2018$Name <- ""
+splitty <- str_split(depthChart2018$nameRank, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2018$Name[i] <- name
+}
+depthChart2018$year <- 2018
+
+#2017
+depthChart2017$Name <- ""
+splitty <- str_split(depthChart2017$`Name position`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2017$Name[i] <- name
+}
+depthChart2017$year <- 2017
+
+#2016
+depthChart2016$Name <- ""
+splitty <- str_split(depthChart2016$`Name position`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2016$Name[i] <- name
+}
+depthChart2016$year <- 2016
+
+#2015
+depthChart2015$Name <- ""
+splitty <- str_split(depthChart2015$`Name position`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2015$Name[i] <- name
+}
+depthChart2015$year <- 2015
+depthChart2015$Name[depthChart2015$Name == "Steve Smith"] <- "Steve Smith Sr."
+
+#2014
+depthChart2014$Name <- ""
+splitty <- str_split(depthChart2014$`Name Position`, "[[(]]")
+i <- 1
+for (i in 1:length(splitty)) {
+  name <- splitty[[i]][1]
+  name <- str_sub(name, 1, -2)
+  depthChart2014$Name[i] <- name
+}
+depthChart2014$year <- 2014
+
+#2012
+depthChart2012$Name[endsWith(depthChart2012$Name, "(R)")] <- str_sub(depthChart2012$Name[endsWith(depthChart2012$Name, "(R)")], 1, -5)
+splitty <- str_split(depthChart2012$Name, "[[+]]")
+i = 1
+for (i in 1:length(splitty)) {
+  Name <- splitty[[i]][1]
+  depthChart2012$Name[i] <- Name
+}
+depthChart2012$year <- 2012
+
+#2010
+depthChart2010$Name[endsWith(depthChart2010$Name, "(R)")] <- str_sub(depthChart2010$Name[endsWith(depthChart2010$Name, "(R)")], 1, -5)
+depthChart2010$Name[endsWith(depthChart2010$Name, "*")] <- str_sub(depthChart2010$Name[endsWith(depthChart2010$Name, "*")], 1, -2)
+depthChart2010$Name[endsWith(depthChart2010$Name, " ")] <- str_sub(depthChart2010$Name[endsWith(depthChart2010$Name, " ")], 1, -2)
+splitty <- str_split(depthChart2010$Name, "[[+]]")
+i = 1
+for (i in 1:length(splitty)) {
+  Name <- splitty[[i]][1]
+  depthChart2010$Name[i] <- Name
+}
+depthChart2010$year <- 2010
+
+
+#Combine all
+depthChart2020 <- depthChart2020 %>% select(Name, year, depthChart)
+depthChart2019 <- depthChart2019 %>% select(Name, year, depthChart)
+depthChart2018 <- depthChart2018 %>% select(Name, year, depthChart)
+depthChart2017 <- depthChart2017 %>% rename(depthChart = depthCharts) %>% select(Name, year, depthChart)
+depthChart2016<- depthChart2016 %>% rename(depthChart = `depth charts`) %>% select(Name, year, depthChart)
+depthChart2015 <- depthChart2015 %>% rename(depthChart = depthCharts) %>%  select(Name, year, depthChart)
+depthChart2014 <- depthChart2014 %>% rename(depthChart = depthCharts) %>%  select(Name, year, depthChart)
+depthChart2012 <- depthChart2012 %>% rename(depthChart = depthCharts) %>%  select(Name, year, depthChart)
+depthChart2010 <- depthChart2010 %>% rename(depthChart = depthCharts) %>%  select(Name, year, depthChart)
+
+depthChartsAll <- bind_rows(depthChart2022, depthChart2021, depthChart2020, depthChart2019, depthChart2018, depthChart2017, depthChart2016, depthChart2015, depthChart2014, depthChart2012, depthChart2010)
+```
+
+
+
+#Roster Data
+```{r}
+roster_columns <- c("gsis_id", 
+                    "season", 
+                    "team", 
+                    "full_name",
+                    "position")
+```
+
+
+
+```{r}
+roster_2009 <- load_rosters(2009) %>% select(roster_columns)
+roster_2010 <- load_rosters(2010) %>% select(roster_columns)
+roster_2011 <- load_rosters(2011) %>% select(roster_columns)
+roster_2012 <- load_rosters(2012) %>% select(roster_columns)
+roster_2013 <- load_rosters(2013) %>% select(roster_columns)
+roster_2014 <- load_rosters(2014) %>% select(roster_columns)
+roster_2015 <- load_rosters(2015) %>% select(roster_columns)
+roster_2016 <- load_rosters(2016) %>% select(roster_columns)
+roster_2017 <- load_rosters(2017) %>% select(roster_columns)
+roster_2018 <- load_rosters(2018) %>% select(roster_columns)
+roster_2019 <- load_rosters(2019) %>% select(roster_columns)
+roster_2020 <- load_rosters(2020) %>% select(roster_columns)
+roster_2021 <- load_rosters(2021) %>% select(roster_columns)
+roster_2022 <- load_rosters(2022) %>% select(roster_columns)
+```
+
+
+#PBP data
+```{r}
+pbp_columns <- c("pass_attempt",
+                 "passer_player_id",
+                 "rusher_player_id",
+                 "receiver_player_id",
+                 "play_type", 
+                 "game_id", 
+                 "drive",
+                 "passer_player_name",
+                 "complete_pass",
+                 "yards_gained",
+                 "air_yards",
+                 "qb_hit",
+                 "interception",
+                 "touchdown",
+                 "yards_after_catch",
+                 "epa",
+                 "wpa",
+                 "air_epa",
+                 "air_wpa",
+                 "yac_epa",
+                 "yac_wpa",
+                 "rush_attempt",
+                 "rusher_player_name",
+                 "fumble",
+                 "receiver_player_name",
+                 "posteam",
+                 "defteam")
+```
+
+
+#Play by Play Data
+```{r}
+pbp_2009 <- load_pbp(2009) %>% select(pbp_columns) %>% mutate(Season = 2009)
+pbp_2010 <- load_pbp(2010) %>% select(pbp_columns) %>% mutate(Season = 2010)
+pbp_2011 <- load_pbp(2011) %>% select(pbp_columns) %>% mutate(Season = 2011)
+pbp_2012 <- load_pbp(2012) %>% select(pbp_columns) %>% mutate(Season = 2012)
+pbp_2013 <- load_pbp(2013) %>% select(pbp_columns) %>% mutate(Season = 2013)
+pbp_2014 <- load_pbp(2014) %>% select(pbp_columns) %>% mutate(Season = 2014)
+pbp_2015 <- load_pbp(2015) %>% select(pbp_columns) %>% mutate(Season = 2015)
+pbp_2016 <- load_pbp(2016) %>% select(pbp_columns) %>% mutate(Season = 2016)
+pbp_2017 <- load_pbp(2017) %>% select(pbp_columns) %>% mutate(Season = 2017)
+pbp_2018 <- load_pbp(2018) %>% select(pbp_columns) %>% mutate(Season = 2018)
+pbp_2019 <- load_pbp(2019) %>% select(pbp_columns) %>% mutate(Season = 2019)
+pbp_2020 <- load_pbp(2020) %>% select(pbp_columns) %>% mutate(Season = 2020)
+pbp_2021 <- load_pbp(2021) %>% select(pbp_columns) %>% mutate(Season = 2021) 
+```
+
+```{r}
+# Bind the seasons together to make one dataset:
+pbp_data <- bind_rows(pbp_2009, pbp_2010, pbp_2011,
+                      pbp_2012, pbp_2013, pbp_2014,
+                      pbp_2015, pbp_2016, pbp_2017,
+                      pbp_2018, pbp_2019, pbp_2020,
+                      pbp_2021)
+
+pbp_data %>% 
+  arrange(Season) %>% 
+  group_by(Season) %>% 
+  mutate(game = cumsum(n_distinct(game_id)))
+
+pbp_data <- pbp_data %>%
+  arrange(Season, game_id) %>%
+  group_by(Season,game_id, posteam) %>%
+  mutate(var_temp = ifelse(row_number()==1,1,0)) %>%
+  group_by(Season, posteam) %>%
+  mutate(game_number = cumsum(var_temp),
+            max = max(game_number))
+```
+
+
+
+```{r}
+# Helper function to return the player's most common
+# name associated with the ID:
+find_player_name <- function(player_names){
+  if (length(player_names) == 0) {
+    result <- "None"
+  } else{
+    table_name <- table(player_names)
+    result <- names(table_name)[which.max(table_name)]
+  }
+  return(result)
+}
+
+# Define the functions to generate the statistics:
+calc_passing_splits <- function(splits,pbp_df) {
+  split_groups <- lapply(splits, as.symbol)
+  # Filter to only pass attempts and add the GameDrive column:
+  pbp_df <- pbp_df %>% filter(pass_attempt == 1 & play_type != "No Play") %>%
+    mutate(GameDrive = paste(as.character(game_id), as.character(drive), sep = "-"))
+  pass_output <- pbp_df %>% group_by_(.dots=split_groups) %>%
+    dplyr::summarise(Player_Name = find_player_name(passer_player_name[which(!is.na(passer_player_name))]),
+              Attempts = n(),
+              Completions = sum(complete_pass,na.rm=TRUE),
+              Drives = n_distinct(GameDrive),
+              Comp_Perc = Completions / Attempts,
+              Total_Yards = sum(yards_gained,na.rm = TRUE),
+              Total_Yards_8 = sum(if_else(game_number > 8, yards_gained, 0), na.rm = TRUE),
+              Total_Yards_4 = sum(if_else(game_number > 12, yards_gained, 0), na.rm = TRUE),
+              Total_Raw_AirYards = sum(air_yards,na.rm=TRUE),
+              Total_Comp_AirYards = sum(complete_pass*air_yards, na.rm=TRUE),
+              Yards_per_Att = Total_Yards / Attempts,
+              Yards_per_Comp = Total_Yards / Completions,
+              Yards_per_Drive = Total_Yards / Drives,
+              Raw_AirYards_per_Att = Total_Raw_AirYards / Attempts,
+              Comp_AirYards_per_Att = Total_Comp_AirYards / Attempts,
+              Raw_AirYards_per_Comp = Total_Raw_AirYards / Completions,
+              Comp_AirYards_per_Comp = Total_Comp_AirYards / Completions,
+              Raw_AirYards_per_Drive = Total_Raw_AirYards / Drives,
+              Comp_AirYards_per_Drive = Total_Comp_AirYards / Drives,
+              PACR = Total_Yards / Total_Raw_AirYards,
+              TimesHit = sum(qb_hit,na.rm=TRUE),
+              TimesHit_per_Drive = TimesHit / Drives,
+              Interceptions = sum(interception,na.rm = TRUE),
+              Interceptions_8 = sum(if_else(game_number > 8, interception, 0), na.rm = TRUE),
+              Interceptions_4 = sum(if_else(game_number > 12, interception, 0), na.rm = TRUE),
+              TDs = sum(touchdown,na.rm=TRUE),
+              TDs_8 = sum(if_else(game_number > 8, touchdown, 0), na.rm = TRUE),
+              TDs_4 = sum(if_else(game_number > 12, touchdown, 0), na.rm = TRUE),
+              Air_TDs = sum(as.numeric(yards_after_catch==0)*touchdown,na.rm=TRUE),
+              aPACR = (Total_Yards + (20 * TDs) - (45 * Interceptions)) / Total_Raw_AirYards,
+              Air_TD_Rate = Air_TDs / TDs,
+              TD_to_Int = TDs / Interceptions,
+              Total_EPA = sum(epa,na.rm=TRUE),
+              Success_Rate = length(which(epa>0)) / Attempts,
+              EPA_per_Att = Total_EPA / Attempts,
+              EPA_per_Comp = sum(complete_pass*epa,na.rm=TRUE) / Completions,
+              EPA_Comp_Perc = sum(complete_pass*epa,na.rm=TRUE)/sum(abs(epa),na.rm=TRUE),
+              TD_per_Att = TDs / Attempts,
+              Air_TD_per_Att = Air_TDs / Attempts,
+              Int_per_Att = Interceptions / Attempts,
+              TD_per_Comp = TDs / Completions,
+              Air_TD_per_Comp = Air_TDs / Completions,
+              TD_per_Drive = TDs / Drives,
+              Air_TD_per_Drive = Air_TDs / Drives,
+              Int_per_Drive = Interceptions / Drives,
+              EPA_per_Drive = Total_EPA / Drives,
+              Total_WPA = sum(wpa,na.rm=TRUE),
+              Win_Success_Rate = length(which(wpa>0)) / Attempts,
+              WPA_per_Att = Total_WPA / Attempts,
+              WPA_per_Comp = sum(complete_pass*wpa,na.rm=TRUE) / Completions,
+              WPA_Comp_Perc = sum(complete_pass*wpa,na.rm=TRUE)/sum(abs(wpa),na.rm=TRUE),
+              WPA_per_Drive = Total_WPA / Drives,
+              Total_Clutch_EPA = sum(epa*abs(wpa),na.rm=TRUE),
+              Clutch_EPA_per_Att = Total_Clutch_EPA / Attempts,
+              Clutch_EPA_per_Drive = Total_Clutch_EPA / Drives,
+              airEPA_Comp = sum(complete_pass*air_epa,na.rm = TRUE),
+              airEPA_Incomp = sum(as.numeric(complete_pass == 0)*air_epa, na.rm = TRUE),
+              Total_Raw_airEPA = sum(air_epa,na.rm = TRUE),
+              Raw_airEPA_per_Att = Total_Raw_airEPA / Attempts,
+              Raw_airEPA_per_Drive = Total_Raw_airEPA / Drives,
+              epa_PACR = Total_EPA / Total_Raw_airEPA,
+              airEPA_per_Att = airEPA_Comp / Attempts,
+              airEPA_per_Comp = airEPA_Comp / Completions,
+              airEPA_per_Drive = airEPA_Comp / Drives,
+              air_Success_Rate = length(which(air_epa>0)) / Attempts,
+              air_Comp_Success_Rate = length(which((complete_pass*air_epa)>0)) / Attempts,
+              airWPA_Comp = sum(complete_pass*air_epa,na.rm = TRUE),
+              airWPA_Incomp = sum(as.numeric(complete_pass == 0)*air_wpa, na.rm = TRUE),
+              Total_Raw_airWPA = sum(air_wpa,na.rm = TRUE),
+              wpa_PACR = Total_WPA / Total_Raw_airWPA,
+              Raw_airWPA_per_Att = Total_Raw_airWPA / Attempts,
+              Raw_airWPA_per_Drive = Total_Raw_airWPA / Drives,
+              airWPA_per_Att = airWPA_Comp / Attempts,
+              airWPA_per_Comp = airWPA_Comp / Completions,
+              airWPA_per_Drive = airWPA_Comp / Drives,
+              air_Win_Success_Rate = length(which(air_wpa>0)) / Attempts,
+              air_Comp_Win_Success_Rate = length(which((complete_pass*air_wpa)>0)) / Attempts,
+              yacEPA_Comp = sum(complete_pass*yac_epa,na.rm=TRUE), 
+              yacEPA_Drop = sum(as.numeric(complete_pass==0)*yac_epa,na.rm=TRUE),
+              Total_yacEPA = sum(yac_epa,na.rm=TRUE),
+              yacEPA_per_Att = Total_yacEPA / Attempts,
+              yacEPA_per_Comp = yacEPA_Comp / Completions,
+              yacEPA_Rec_per_Drive = yacEPA_Comp / Drives,
+              yacEPA_Drop_per_Drive = yacEPA_Drop / Drives,
+              yacWPA_Comp = sum(complete_pass*yac_wpa,na.rm=TRUE),
+              yacWPA_Drop = sum(as.numeric(complete_pass==0)*yac_wpa,na.rm=TRUE),
+              Total_yacWPA = sum(yac_wpa,na.rm=TRUE),
+              yacWPA_per_Att = Total_yacWPA / Attempts,
+              yacWPA_per_Comp = yacWPA_Comp / Completions,
+              yacWPA_Comp_per_Drive = yacWPA_Comp / Drives,
+              yacWPA_Drop_per_Drive = yacWPA_Drop / Drives,
+              yac_Success_Rate = length(which(yac_epa>0)) / Attempts,
+              yac_Rec_Success_Rate = length(which((complete_pass*yac_epa)>0)) / Attempts,
+              yac_Win_Success_Rate = length(which(yac_wpa>0)) / Attempts,
+              yac_Comp_Win_Success_Rate = length(which((complete_pass*yac_wpa)>0)) / Attempts)
+  return(pass_output)
+}
+
+
+calc_rushing_splits <- function(splits,pbp_df) {
+  split_groups <- lapply(splits, as.symbol)
+  # Filter to only rush attempts:
+  pbp_df <- pbp_df %>% filter(rush_attempt == 1 & play_type != "No Play") %>%
+    mutate(GameDrive = paste(as.character(game_id), as.character(drive),sep="-"))
+  rush_output <- pbp_df %>% group_by_(.dots=split_groups) %>%
+    dplyr::summarise(Player_Name = find_player_name(rusher_player_name[which(!is.na(rusher_player_name))]),
+              Carries = n(),
+              Drives = n_distinct(GameDrive),
+              Car_per_Drive = Carries / Drives,
+              Total_Yards = sum(yards_gained,na.rm = TRUE),
+              Total_Yards_8 = sum(if_else(game_number > 8, yards_gained, 0), na.rm = TRUE),
+              Total_Yards_4 = sum(if_else(game_number > 12, yards_gained, 0), na.rm = TRUE),
+              Yards_per_Car = Total_Yards / Carries,
+              Yards_per_Drive = Total_Yards / Drives,
+              Fumbles = sum(fumble,na.rm = TRUE),
+              TDs = sum(touchdown,na.rm=TRUE),
+              TDs_8 = sum(if_else(game_number > 8, touchdown, 0), na.rm = TRUE),
+              TDs_4 = sum(if_else(game_number > 12, touchdown, 0), na.rm = TRUE),
+              TD_to_Fumbles = TDs / Fumbles,
+              Total_EPA = sum(epa,na.rm=TRUE),
+              Success_Rate = length(which(epa>0)) / n(),
+              EPA_per_Car = Total_EPA / Carries,
+              EPA_Ratio = sum(as.numeric(epa>0)*epa,na.rm=TRUE)/sum(abs(epa),na.rm=TRUE),
+              TD_per_Car = TDs / Carries,
+              Fumbles_per_Car = Fumbles / Carries,
+              Fumbles_per_Drive = Fumbles / Drives,
+              TD_Drive = TDs / Drives,
+              EPA_per_Drive = Total_EPA / Drives,
+              Total_WPA = sum(wpa,na.rm=TRUE),
+              WPA_per_Drive = Total_WPA / Drives,
+              Win_Success_Rate = length(which(wpa>0)) / Carries,
+              WPA_per_Car = Total_WPA / Carries,
+              WPA_Ratio = sum(as.numeric(wpa>0)*wpa,na.rm=TRUE)/sum(abs(wpa),na.rm=TRUE),
+              Total_Clutch_EPA = sum(epa*abs(wpa),na.rm=TRUE),
+              Clutch_EPA_per_Car = Total_Clutch_EPA / Carries,
+              Clutch_EPA_per_Drive = Total_Clutch_EPA / Drives) 
+  return(rush_output)
+}
+
+calc_receiving_splits <- function(splits,pbp_df) {
+  split_groups <- lapply(splits, as.symbol)
+  # Filter to only pass attempts:
+  pbp_df <- pbp_df %>% filter(pass_attempt == 1 & play_type != "No Play") %>%
+    mutate(GameDrive = paste(as.character(game_id), as.character(drive),sep="-")) 
+  rec_output <- pbp_df %>% group_by_(.dots=split_groups) %>%
+    dplyr::summarise(Player_Name = find_player_name(receiver_player_name[which(!is.na(receiver_player_name))]),
+              Targets = n(), 
+              Receptions = sum(complete_pass,na.rm=TRUE),
+              Receptions_8 = sum(if_else(game_number > 8, complete_pass, 0), na.rm = TRUE),
+              Receptions_4 = sum(if_else(game_number > 12, complete_pass, 0), na.rm = TRUE),
+              Drives = n_distinct(GameDrive),
+              Targets_per_Drive = Targets / Drives,
+              Rec_per_Drive = Receptions / Drives,
+              Total_Yards = sum(yards_gained,na.rm = TRUE),
+              Total_Yards_8 = sum(if_else(game_number > 8, yards_gained, 0), na.rm = TRUE),
+              Total_Yards_4 = sum(if_else(game_number > 12, yards_gained, 0), na.rm = TRUE),
+              Yards_per_Drive = Total_Yards / Drives,
+              Total_Raw_YAC = sum(yards_after_catch,na.rm=TRUE),
+              Yards_per_Rec = Total_Yards / Receptions,
+              Yards_per_Target = Total_Yards / Targets,
+              YAC_per_Target = Total_Raw_YAC / Targets,
+              Total_Caught_YAC = sum(complete_pass*yards_after_catch,na.rm=TRUE),
+              Total_Dropped_YAC = sum(as.numeric(complete_pass==0)*yards_after_catch,na.rm=TRUE),
+              Caught_YAC_per_Target = Total_Caught_YAC / Targets,
+              Dropped_YAC_per_Target = Total_Dropped_YAC / Targets,
+              YAC_per_Rec = Total_Raw_YAC / Receptions,
+              Caught_YAC_per_Rec = Total_Caught_YAC / Receptions,
+              Dropped_YAC_per_Rec = Total_Dropped_YAC / Receptions,
+              YAC_per_Drive = Total_Raw_YAC / Drives,
+              Caught_YAC_per_Drive = Total_Caught_YAC / Drives,
+              Dropped_YAC_per_Drive = Total_Dropped_YAC / Drives,
+              Rec_Percentage = Receptions / Targets,
+              Fumbles = sum(fumble,na.rm = TRUE),
+              TDs = sum(touchdown,na.rm=TRUE),
+              TDs_8 = sum(if_else(game_number > 8, touchdown, 0), na.rm = TRUE),
+              TDs_4 = sum(if_else(game_number > 12, touchdown, 0), na.rm = TRUE),
+              TDs_per_Drive = TDs / Drives,
+              Fumbles_per_Drive = Fumbles / Drives,
+              AC_TDs = sum(as.numeric(yards_after_catch > 0)*touchdown,na.rm=TRUE),
+              AC_TDs_per_Drive = AC_TDs / Drives,
+              AC_TD_Rate = AC_TDs / TDs,
+              TD_to_Fumbles = TDs / Fumbles,
+              Total_EPA = sum(epa,na.rm=TRUE),
+              EPA_per_Drives = Total_EPA / Drives,
+              Success_Rate = length(which(epa>0)) / Targets,
+              EPA_per_Rec = sum(complete_pass*epa,na.rm=TRUE) / Receptions,
+              EPA_per_Target = Total_EPA / Targets,
+              EPA_Rec_Perc = sum(complete_pass*epa,na.rm=TRUE)/sum(abs(epa),na.rm=TRUE),
+              TD_per_Targets = TDs / Targets,
+              Fumbles_per_Rec = Fumbles / Receptions,
+              TD_per_Rec = TDs / Receptions,
+              Total_WPA = sum(wpa,na.rm=TRUE),
+              WPA_per_Drive = Total_WPA / Drives,
+              Win_Success_Rate = length(which(wpa>0)) / Targets,
+              WPA_per_Target = Total_WPA / Targets,
+              WPA_per_Rec = sum(complete_pass*wpa,na.rm=TRUE) / Receptions,
+              WPA_Rec_Perc = sum(complete_pass*wpa,na.rm=TRUE)/sum(abs(wpa),na.rm=TRUE),
+              Total_Clutch_EPA = sum(epa*abs(wpa),na.rm=TRUE),
+              Clutch_EPA_per_Drive = Total_Clutch_EPA / Drives,
+              Total_Raw_AirYards = sum(air_yards,na.rm=TRUE),
+              PACR = Total_Yards / Total_Raw_AirYards,
+              Total_Caught_AirYards = sum(complete_pass*air_yards, na.rm=TRUE),
+              Raw_AirYards_per_Target = Total_Raw_AirYards / Targets,
+              RACR = Total_Yards / Total_Raw_AirYards,
+              Total_Raw_airEPA = sum(air_epa, na.rm=TRUE),
+              Total_Caught_airEPA = sum(complete_pass*air_epa, na.rm=TRUE),
+              Raw_airEPA_per_Drive = Total_Raw_airEPA / Drives,
+              Caught_airEPA_per_Drive = Total_Caught_airEPA / Drives,
+              airEPA_per_Target = Total_Raw_airEPA / Targets,
+              Caught_airEPA_per_Target = Total_Caught_airEPA / Targets,
+              epa_RACR = Total_EPA / Total_Raw_airEPA,
+              Total_Raw_airWPA = sum(air_wpa, na.rm=TRUE),
+              Total_Caught_airWPA = sum(complete_pass*air_wpa, na.rm=TRUE),
+              Raw_airWPA_per_Drive = Total_Raw_airWPA / Drives,
+              Caught_airWPA_per_Drive = Total_Caught_airWPA / Drives,
+              airWPA_per_Target = Total_Raw_airWPA / Targets,
+              Caught_airWPA_per_Target = Total_Caught_airWPA / Targets,
+              yacEPA_Rec = sum(complete_pass*yac_epa,na.rm=TRUE),
+              yacEPA_Drop = sum(as.numeric(complete_pass==0)*yac_epa,na.rm=TRUE),
+              Total_yacEPA = sum(yac_epa,na.rm=TRUE),
+              yacEPA_per_Target = Total_yacEPA / Targets,
+              yacEPA_per_Rec = yacEPA_Rec / Receptions,
+              yacEPA_Rec_per_Drive = yacEPA_Rec / Drives,
+              yacEPA_Drop_per_Drive = yacEPA_Drop / Drives,
+              yacWPA_Rec = sum(complete_pass*yac_wpa,na.rm=TRUE),
+              yacWPA_Drop = sum(as.numeric(complete_pass==0)*yac_wpa,na.rm=TRUE),
+              Total_yacWPA = sum(yac_wpa,na.rm=TRUE),
+              yacWPA_per_Target = Total_yacWPA / Targets,
+              yacWPA_per_Rec = yacWPA_Rec / Receptions,
+              yacWPA_Rec_per_Drive = yacWPA_Rec / Drives,
+              yacWPA_Drop_per_Drive = yacWPA_Drop / Drives,
+              wpa_RACR = Total_WPA / Total_Raw_airWPA,
+              yac_Success_Rate = length(which(yac_epa>0)) / Targets,
+              yac_Rec_Success_Rate = length(which((complete_pass*yac_epa)>0)) / Targets,
+              air_Success_Rate = length(which(air_epa>0)) / Targets,
+              air_Rec_Success_Rate = length(which((complete_pass*air_epa)>0)) / Targets,
+              yac_Win_Success_Rate = length(which(yac_wpa>0)) / Targets,
+              yac_Rec_Win_Success_Rate = length(which((complete_pass*yac_wpa)>0)) / Targets,
+              air_Win_Success_Rate = length(which(air_wpa>0)) / Targets,
+              air_Rec_Win_Success_Rate = length(which((complete_pass*air_wpa)>0)) / Targets)
+  return(rec_output)
+}
+
+# For now just make JAX be JAC:
+pbp_data$posteam <- with(pbp_data,
+                         ifelse(posteam == "JAX","JAC", posteam))
+pbp_data$defteam <- with(pbp_data,
+                               ifelse(defteam == "JAX", "JAC", defteam))
+```
+
+
+
+#run functions
+```{r}
+# First generate stats at the Season level for each player,
+# removing the observations with missing player names:
+
+season_passing_df <- calc_passing_splits(c("Season","passer_player_id"), pbp_data) %>% 
+  mutate(passer_gsis = passer_player_id) %>% 
+  filter(passer_player_id != "None") %>% arrange(Season,desc(Attempts)) 
+
+season_receiving_df <- calc_receiving_splits(c("Season","receiver_player_id"), pbp_data) %>% 
+  mutate(receiver_gsis = receiver_player_id) %>% 
+  filter(receiver_player_id != "None") %>% arrange(Season,desc(Targets)) 
+
+season_rushing_df <- calc_rushing_splits(c("Season","rusher_player_id"), pbp_data) %>%
+  filter(rusher_player_id != "None") %>% arrange(Season,desc(Carries)) 
+```
+
+
+#join + create fantasy points
+```{r}
+allData <- season_rushing_df %>% 
+  full_join(season_receiving_df, by = c("rusher_player_id" = "receiver_player_id",
+                                                            "Season" = "Season")) %>% 
+  full_join(season_passing_df, by = c("rusher_player_id" = "passer_player_id", 
+                                        "Season" = "Season")) %>% 
+  mutate(gsis_id = coalesce(rusher_player_id, receiver_gsis, passer_gsis))
+
+allData$Name <- coalesce(allData$Player_Name, allData$Player_Name.x, allData$Player_Name.y)
+
+
+is.na(allData)<-sapply(allData, is.infinite)
+numerics <- which(sapply(allData, is.numeric))
+
+allData[,numerics] <- sapply(allData[,numerics], function(x) {
+  ifelse(is.na(x), 0, x)
+})
+
+allData <- allData %>% 
+  mutate(
+    fantasyPoints = Total_Yards.x * rushYards + TDs.x * rushTD + (Fumbles.x + Fumbles.y) * fmb + Total_Yards.y * receivingYards + TDs.y * receivingTD + Receptions * ppr + Total_Yards * passYards + TDs * passTD + Interceptions * int,
+    fantasy_points_8 = Total_Yards_8.x * rushYards + TDs_8.x * rushTD + Total_Yards_8.y * receivingYards + TDs_8.y * receivingTD + Receptions_8 * ppr + Total_Yards_8 * passYards + TDs_8 * passTD,
+    fantasy_points_4 = Total_Yards_4.x * rushYards + TDs_4.x * rushTD + Total_Yards_4.y * receivingYards + TDs_4.y * receivingTD + Receptions_4 * ppr + Total_Yards_4 * passYards + TDs_4 * passTD)
+
+rosters <- bind_rows(roster_2009, roster_2010, roster_2011, roster_2012,
+                 roster_2013, roster_2014, roster_2015, roster_2016,
+                 roster_2017, roster_2018, roster_2019, roster_2020, roster_2021) %>% 
+  rename(full_player_name = full_name)
+
+rosters <- rosters[!duplicated(rosters), ]
+
+allData <- allData %>%
+  left_join(select(rosters, gsis_id, season, team, full_player_name, position),
+            by = c("gsis_id" = "gsis_id", 
+                   "Season" = "season")) %>% 
+  filter(!is.na(full_player_name))
+```
+
+
+#weekly data
+```{r}
+season_weekly_passing_df <- calc_passing_splits(c("Season","passer_player_id", "game_number"), pbp_data) %>% 
+  mutate(passer_gsis = passer_player_id) %>% 
+  filter(passer_player_id != "None") %>% arrange(Season,desc(Attempts)) 
+
+season_weekly_receiving_df <- calc_receiving_splits(c("Season","receiver_player_id", "game_number"), pbp_data) %>% 
+  filter(receiver_player_id != "None") %>%
+  mutate(receiver_gsis = receiver_player_id) %>% 
+  arrange(Season,desc(Targets)) 
+
+season_weekly_rushing_df <- calc_rushing_splits(c("Season","rusher_player_id", "game_number"), pbp_data) %>%
+  filter(rusher_player_id != "None") %>% arrange(Season,desc(Carries)) 
+
+all_data_weekly <- season_weekly_rushing_df %>% 
+  full_join(season_weekly_receiving_df, by =
+              c("rusher_player_id" = "receiver_player_id",
+    "Season" = "Season",
+    "game_number" = "game_number")) %>% 
+  full_join(season_weekly_passing_df, by = c(
+    "rusher_player_id" = "passer_player_id", 
+    "Season" = "Season",
+    "game_number" = "game_number")) %>% 
+  mutate(gsis_id = coalesce(rusher_player_id, receiver_gsis, passer_gsis))
+
+
+is.na(all_data_weekly)<-sapply(all_data_weekly, is.infinite)
+numerics <- which(sapply(all_data_weekly, is.numeric))
+
+all_data_weekly[,numerics] <- sapply(all_data_weekly[,numerics], function(x) {
+  ifelse(is.na(x), 0, x)
+})
+
+all_data_weekly <- all_data_weekly %>% 
+  mutate(
+    fantasyPoints = Total_Yards.x * rushYards + TDs.x * rushTD + (Fumbles.x + Fumbles.y) * fmb +
+      Total_Yards.y * receivingYards + TDs.y * receivingTD +
+      Receptions * ppr + Total_Yards * passYards +
+      TDs * passTD + Interceptions * int)
+
+all_data_weekly <- all_data_weekly %>% 
+  left_join(select(rosters, gsis_id, season, team, full_player_name, position), by = c("gsis_id" = "gsis_id", 
+                                      "Season" = "season")) %>% 
+  filter(!is.na(full_player_name))
+
+weekly_par <- all_data_weekly %>% 
+  filter(position %in% c('RB', 'WR', 'TE', 'QB')) %>% 
+  arrange(-fantasyPoints) %>% 
+  group_by(Season, position, game_number) %>% 
+  dplyr::mutate(posrank = row_number(),
+         replacementValue = case_when(
+           position == "QB" & posrank == round(numberOfTeams * 1.2) ~ fantasyPoints,
+           position == "RB" & posrank == round(numberOfTeams * 3) ~ fantasyPoints,
+           position == "WR" & posrank == round(numberOfTeams * 3) ~ fantasyPoints,
+           position == "TE" & posrank == round(numberOfTeams * 1.2) ~ fantasyPoints
+         ),
+         PAR = fantasyPoints - max(replacementValue, na.rm = TRUE),
+         PAR = if_else(is.infinite(PAR), 0, PAR)) %>% 
+  dplyr::select(-c(replacementValue, posrank)) %>% 
+  ungroup() %>% 
+  select(Season, gsis_id, fantasyPoints, PAR) %>% 
+  group_by(Season, gsis_id) %>% 
+  summarise(positive_weekly_PAR = sum(if_else(PAR < 0, 0, PAR)),
+            weekly_PAR = sum(PAR),
+            sd_PAR = sd(PAR),
+            games_played = n())
+
+
+ggplot(weekly_par, aes(x = sd_PAR , y = weekly_PAR)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+
+#add weekly par 
+```{r}
+allData <- allData %>% 
+  left_join(weekly_par, by = c("gsis_id" = "gsis_id", 
+                               "Season" = "Season")) %>% 
+  mutate(positive_weekly_PAR = replace_na(positive_weekly_PAR, 0),
+         games_played = replace_na(games_played, 0))
+
+allData <- allData[!duplicated(allData),]
+
+```
+
+#team data 
+```{r}
+team_data <- pbp_data %>%
+  filter(play_type != "No Play",
+         posteam != 'NA') %>%
+  group_by(posteam, Season) %>% 
+  summarise(passYards = sum(if_else(pass_attempt == 1, yards_gained, 0)),
+            passAttempts = sum(pass_attempt),
+            passTDs = sum(if_else(pass_attempt == 1, touchdown, 0)),
+            rushYards = sum(if_else(rush_attempt == 1, yards_gained, 0)),
+            rushAttempts = sum(rush_attempt),
+            rushTDs = sum(if_else(rush_attempt == 1, touchdown, 0)))
+
+
+allData <- allData %>% 
+  left_join(team_data, by = c("team" = "posteam", 
+                               "Season" = "Season"))
+```
+
+
+
+#Add Roster Data
+```{r}
+allData$hasYearBefore <- 0
+for (i in 1:nrow(allData)) {
+  row <- allData[i,]
+  id <- row$gsis_id
+  name <- row$full_player_name
+  nextSeason <- as.numeric(row$Season) + 1
+  
+  x <- nrow(allData[allData$Season == nextSeason & allData$gsis_id == id,])
+  y <- nrow(allData[allData$Season == nextSeason & allData$full_player_name == name,])
+  
+  if (x > 0) {
+    allData[allData$Season == nextSeason & allData$gsis_id == id,]$hasYearBefore <- 1
+  } 
+  if (x == 0 & y > 0) {
+    allData[allData$Season == nextSeason & allData$full_player_name == name,]$hasYearBefore <- 1
+  }
+}
+
+
+#get next seasons points (Prediction Variable)
+allData$nextSeasonsPoints <- apply(allData, 1, function(x) {
+  nextSeason <- as.numeric(x[1]) + 1
+  id <- as.character(x[2])
+  name <- as.character(x[which(colnames(allData) == 'full_player_name')])
+
+  val <- allData[allData$Season == nextSeason & allData$gsis_id == id,]$fantasyPoints[1]
+  
+  y <-allData[allData$Season == nextSeason & allData$full_player_name == name,]$fantasyPoints[1]
+  
+  coalesce(val,y)
+})
+allData$nextSeasonsPoints[is.na(allData$nextSeasonsPoints)] <- 0
+
+
+#Get next seasons team
+allData$nextSeasonsTeam <- apply(allData, 1, function(x) {
+  nextSeason <- as.numeric(x[1]) + 1
+  id <- x[2]
+  
+  allData[allData$Season == nextSeason & allData$gsis_id == id,]$team[1]
+})
+allData$nextSeasonsTeam[is.na(allData$nextSeasonsTeam)] <- "FA"
+
+allData %>% 
+  filter(Season == 2019) %>% 
+  filter(full_player_name == 'Lamar Jackson')
+
+
+allData %>% 
+  filter(Season == 2021)
+```
+
+
+```{r}
+allData %>% 
+  filter(grepl("Le'Veon", full_player_name)) %>% 
+  select(full_player_name, team, games_played, positive_weekly_PAR, weekly_PAR, fantasyPoints, fantasy_points_8, fantasy_points_4, nextSeasonsPoints, hasYearBefore)
+```
+
+
+#Create row for prev rookie's 
+```{r}
+data <- allData %>% arrange(Season) %>% 
+  select(-Player_Name.x, -Player_Name.y, -Player_Name, -Name, -rusher_player_id, -receiver_gsis, -passer_gsis)
+data$nextSeasonsPoints <- as.numeric(data$nextSeasonsPoints)
+
+data <- data %>% 
+  group_by(gsis_id) %>% 
+  mutate(firstFullYear = Season == first(Season),
+         isRookie = 0)
+
+rookies <- data[data$firstFullYear | data$hasYearBefore == 0,]
+data$firstFullYear <- as.numeric(data$firstFullYear)
+
+i = 1
+for (i in 1:nrow(rookies)) {
+  row <- rookies[i,]
+  name <- row$full_player_name
+  id <- row$gsis_id
+  Season <- row$Season
+  team <- row$team
+  nextSeasonsTeam <- row$team
+  nextSeasonsPoints <- row$fantasyPoints
+
+  row[,1:ncol(row)] <- 0
+  
+  row$gsis_id <- id
+  row$Season <- Season - 1
+  row$team <- team
+  row$nextSeasonsTeam <- nextSeasonsTeam
+  row$nextSeasonsPoints <- nextSeasonsPoints
+  row$isRookie <- 1
+  row$full_player_name <- name
+  row$position <- as.character(row$position)
+
+  data <- bind_rows(data, row)
+}
+data <- data %>% mutate(
+  Season = Season + 1
+)
+data2 <- data
+
+```
+
+
+#cleaning for join
+```{r}
+newdata <- data2
+allProjectionsCopy <- allProjections
+
+#Clean teams
+newdata <- newdata %>% 
+  mutate(nextSeasonsTeam = case_when(
+    nextSeasonsTeam =="JAX" ~ "JAC",
+    nextSeasonsTeam == "SD" ~ "LAC",
+    nextSeasonsTeam == "LA" ~ "LAR",
+    nextSeasonsTeam == "STL" ~ "LAR",
+    TRUE ~ nextSeasonsTeam
+  ), 
+  team = case_when(
+    team =="JAX" ~ "JAC",
+    team == "SD" ~ "LAC",
+    team == "LA" ~ "LAR",
+    team == "STL" ~ "LAR",
+    TRUE ~ team
+  ))
+
+allProjectionsCopy <- allProjectionsCopy %>% 
+  mutate(team = toupper(team),
+         team = case_when( 
+    toupper(team) =="JAX" ~ "JAC",
+    toupper(team) == "SD" ~ "LAC",
+    toupper(team) == "LA" ~ "LAR",
+    toupper(team) == "STL" ~ "LAR",
+    team == 'WSH' ~ 'WAS',
+    TRUE ~ team
+  )) 
+
+#get rid of first space names
+allProjectionsCopy$Name[startsWith(allProjectionsCopy$Name, " ")] <- str_sub(allProjectionsCopy$Name[startsWith(allProjectionsCopy$Name, " ")], 2, -1)
+
+#get the first two syllables of the name thats it
+splitty <- str_split(allProjectionsCopy$Name, " ")
+i = 1
+for (i in 1:nrow(allProjectionsCopy)) {
+  firstName <- splitty[[i]][1]
+  lastName <- splitty[[i]][2]
+  name <- paste0(firstName, " ", lastName)
+  
+  allProjectionsCopy$Name[i] <- name
+}
+allProjectionsCopy$Name <- str_replace_all(allProjectionsCopy$Name, "[[:punct:]]", " ")
+allProjectionsCopy$Name <- gsub(" ", "", allProjectionsCopy$Name, fixed = TRUE)
+
+#logged data
+splitty <- str_split(newdata$full_player_name, " ")
+i = 1
+for (i in 1:nrow(newdata)) {
+  firstName <- splitty[[i]][1]
+  lastName <- splitty[[i]][2]
+  name <- paste0(firstName, " ", lastName)
+  
+  newdata$full_player_name[i] <- name
+}
+newdata$full_player_name <- str_replace_all(newdata$full_player_name, "[[:punct:]]", " ")
+newdata$full_player_name <- gsub(" ", "", newdata$full_player_name, fixed = TRUE)
+newdata <- newdata %>% 
+  filter(full_player_name != "NANA") 
+
+#depthchart
+depthChartsCopy <- depthChartsAll
+splitty <- str_split(depthChartsCopy$Name, " ")
+i = 1
+for (i in 1:nrow(depthChartsCopy)) {
+  firstName <- splitty[[i]][1]
+  lastName <- splitty[[i]][2]
+  name <- paste0(firstName, " ", lastName)
+  
+  depthChartsCopy$Name[i] <- name
+}
+depthChartsCopy$Name <- str_replace_all(depthChartsCopy$Name, "[[:punct:]]", " ")
+depthChartsCopy$Name <- gsub(" ", "", depthChartsCopy$Name, fixed = TRUE)
+depthChartsCopy <- depthChartsCopy %>% 
+  filter(Name != "NANA") 
+```
+
+
+```{r}
+combo <- allProjectionsCopy %>% full_join(newdata, by = c("Name" = "full_player_name",
+                                             "year" = "Season")) %>%
+  left_join(depthChartsCopy, by = c("Name" = "Name",
+                                   "year" = "year"))
+
+
+combo[is.na(combo$depthChart),]$depthChart <- 'NA'
+combo <- combo %>%
+  mutate(depthChart = as.factor(depthChart))
+
+
+
+combo <- combo %>%
+  mutate(rank = ifelse(is.na(rank), 300, rank),
+         position.x = ifelse(is.na(position.x), position.y, position.x),
+         team.x = ifelse(is.na(team.x), team.y, team.x),
+         Name = coalesce(Name))
+
+
+#Find the people who have the fucking same name in the same year
+filters <- combo %>% group_by(Name, year) %>%
+  dplyr::mutate(num_rows = n())
+
+#filter the people who have more than 1 name but also don't have the same team
+filter <- filters$num_rows > 1 & (filters$team.x != filters$nextSeasonsTeam)
+filter[is.na(filter)] <- TRUE
+
+combo <- combo[!filter, ]
+numerics <- which(sapply(combo, is.numeric))
+combo[,numerics] <- sapply(combo[,numerics], function(x) {
+  ifelse(is.na(x), 0, x)
+})
+
+combo$team.x <- toupper(combo$team.x)
+combo$team.x <- ifelse(is.na(combo$team.x), 'NA', combo$team.x)
+combo$team.x[endsWith(combo$team.x, "D/")] <- str_sub(combo$team.x[endsWith(combo$team.x, "D/")], 1, -3)
+combo$team <- as.factor(combo$team.x)
+combo$position <- as.factor(combo$position.x)
+
+combo %>%
+  filter(year == 2021) %>%
+  select(rank, everything())
+
+sum(is.na(combo$team.x))
+
+combo %>%
+  filter(is.na(team.x))
+```
+
+
+Creating PAR and removing nextSeasonsPoints
+```{r}
+combo <- combo %>% 
+  filter(position %in% c('RB', 'WR', 'TE', 'QB')) %>% 
+  arrange(-nextSeasonsPoints) %>% 
+  group_by(year, position) %>% 
+  dplyr::mutate(posrank = row_number(),
+         replacementValue = case_when(
+           position == "QB" & posrank == 11 ~ nextSeasonsPoints,
+           position == "RB" & posrank == 26 ~ nextSeasonsPoints,
+           position == "WR" & posrank == 26 ~ nextSeasonsPoints,
+           position == "TE" & posrank == 11 ~ nextSeasonsPoints
+         ),
+         nextSeasonPAR = nextSeasonsPoints - max(replacementValue, na.rm = TRUE)) %>% 
+  dplyr::select(-c(nextSeasonsPoints, replacementValue, posrank)) %>% 
+  ungroup() %>% 
+  dplyr::mutate(team = as.factor(team),
+         nextSeasonsTeam = as.factor(nextSeasonsTeam)) %>% 
+  arrange(-fantasy_points_8) %>% 
+  group_by(year, position) %>% 
+  dplyr::mutate(posrank = row_number(),
+         replacementValue = case_when(
+           position == "QB" & posrank == 11 ~ fantasy_points_8,
+           position == "RB" & posrank == 26 ~ fantasy_points_8,
+           position == "WR" & posrank == 26 ~ fantasy_points_8,
+           position == "TE" & posrank == 11 ~ fantasy_points_8
+         ),
+         PAR_8 = fantasy_points_8 - max(replacementValue, na.rm = TRUE)) %>% 
+  dplyr::select(-replacementValue) %>% 
+  ungroup() %>% 
+  dplyr::mutate(team = as.factor(team),
+         nextSeasonsTeam = as.factor(nextSeasonsTeam)) %>% 
+  arrange(-fantasy_points_4) %>% 
+  group_by(year, position) %>% 
+  dplyr::mutate(posrank = row_number(),
+         replacementValue = case_when(
+           position == "QB" & posrank == 11 ~ fantasy_points_4,
+           position == "RB" & posrank == 26 ~ fantasy_points_4,
+           position == "WR" & posrank == 26 ~ fantasy_points_4,
+           position == "TE" & posrank == 11 ~ fantasy_points_4
+         ),
+         PAR_4 = fantasy_points_4 - max(replacementValue, na.rm = TRUE)) %>% 
+  dplyr::select(-replacementValue) %>% 
+  dplyr::mutate(team = as.factor(team),
+         nextSeasonsTeam = as.factor(nextSeasonsTeam)) %>% 
+  arrange(-fantasyPoints) %>% 
+  group_by(year, position) %>% 
+  dplyr::mutate(posrank = row_number(),
+         replacementValue = case_when(
+           position == "QB" & posrank == 11 ~ fantasyPoints,
+           position == "RB" & posrank == 26 ~ fantasyPoints,
+           position == "WR" & posrank == 26 ~ fantasyPoints,
+           position == "TE" & posrank == 11 ~ fantasyPoints
+         ),
+         PAR = fantasyPoints - max(replacementValue, na.rm = TRUE)) %>% 
+  dplyr::select(-replacementValue)
+
+
+team_ranks <- combo %>% 
+  group_by(team, year, position) %>% 
+  arrange(rank) %>% 
+  mutate(team_rank = row_number()) %>% 
+  ungroup() %>% 
+  group_by(team, year) %>% 
+  summarise(qb1 = coalesce(min(if_else(team_rank == 1 & position == 'QB', rank, 300)), 300),
+            rb1 = coalesce(min(if_else(team_rank == 1 & position == 'RB', rank, 300)), 300),
+            rb2 = coalesce(min(if_else(team_rank == 2 & position == 'RB', rank, 300)), 300),
+            wr1 = coalesce(min(if_else(team_rank == 1 & position == 'WR', rank, 300)), 300),
+            wr2 = coalesce(min(if_else(team_rank == 2 & position == 'WR', rank, 300)), 300),
+            te1 = coalesce(min(if_else(team_rank == 1 & position == 'TE', rank, 300)), 300)) %>% 
+  select(qb1, rb1, rb2, wr1, wr2, te1, everything())
+ 
+
+combo <- combo %>% 
+  left_join(team_ranks, by = c('team' = 'team',
+                               'year' = 'year'))
+```
+
+EDA
+```{r}
+combo %>% 
+  filter(position %in% c('RB', 'TE', 'WR', 'QB')) %>% 
+  ggplot(., aes(x = PAR, fill = posrank > 10)) +
+  geom_density(alpha = .6) +
+  facet_wrap(~position) +
+  theme_bw() 
+
+combo %>% 
+  filter(position %in% c('RB', 'TE', 'WR', 'QB')) %>% 
+  ggplot(., aes(x = nextSeasonPAR, fill = posrank > 10)) +
+  geom_density(alpha = .6) +
+  facet_wrap(~position) +
+  theme_bw() 
+
+combo %>% 
+  filter(position %in% c('RB', 'TE', 'WR', 'QB')) %>% 
+  group_by(position, rank) %>% 
+  dplyr::summarise(PAR = mean(PAR)) %>% 
+  ggplot(., aes(x = rank, y = PAR, color = position)) +
+  geom_line(alpha = .2) +
+  geom_smooth() +
+  theme_bw() +
+  facet_wrap(~position)
+
+combo %>% 
+  filter(position %in% c('RB', 'TE', 'WR', 'QB')) %>% 
+  group_by(position, rank) %>% 
+  dplyr::summarise(PAR = mean(nextSeasonPAR)) %>% 
+  ggplot(., aes(x = rank, y = PAR, color = position)) +
+  geom_line(alpha = .2) +
+  geom_smooth() +
+  theme_bw() +
+  facet_wrap(~position)
+
+combo %>% 
+  filter(position %in% c('RB', 'TE', 'WR', 'QB')) %>% 
+  group_by(position, games_played) %>% 
+  dplyr::summarise(pos_PAR = mean(positive_weekly_PAR)) %>% 
+  ggplot(., aes(x = games_played, y = pos_PAR, color = position)) +
+  geom_line() +
+  theme_bw() +
+  facet_wrap(~position)
+```
+
+
+Train, Test, and Pred Set Creation
+```{r}
+season <- 2022
+
+combo2 <- combo %>%
+  filter(position %in% c('RB', 'QB', 'WR', 'TE')) %>% 
+  mutate(years_from_season = season - year) 
+
+
+combo2[combo2$Name == 'JameisWinston' & combo2$year == 2020, ]$depthChart <-  'QB2'
+
+combo2 <- combo2[!is.na(combo2$position.y), ]
+  
+modelData <- combo2 %>% 
+    select(-c("Name", "team.y", "position.y", "position.x", "team.x", "nextSeasonsTeam", "gsis_id", "team", `name rank`, "gsis_id", "team.y", "position.y"))
+
+train <- modelData %>% filter(year < season)
+test <- modelData %>% filter(year == season)
+preds <- combo2 %>% filter(year == season)
+
+```
+
+
+
+#model using lasso vars
+```{r}
+rf2022 <- randomForest(nextSeasonPAR ~
+                     .
+                     , 
+      data = train)
+rf
+```
+
+
+
+
+```{r}
+vip(rf)
+
+plot(predict(rf) ~ train$nextSeasonPAR)
+plot(predict(rf) - train$nextSeasonPAR ~ predict(rf))
+hist(predict(rf) - train$nextSeasonPAR)
+```
+
+
+
+getting distributions of predictions
+```{r}
+predictions <- predict(rf, newdata = test, type="response")
+intervals <- predict(rf, newdata = test, predict.all = TRUE)
+
+pred.rf.int <- apply(intervals$individual, 1, function(x) {
+    c(mean(x) + c(-1, 1) * sd(x), 
+      quantile(x, c(0.025, 0.975)))
+  })
+
+tableOfConfidence <- t(pred.rf.int)
+preds$lower_bound_rf <- tableOfConfidence[,3]
+preds$upper_bound_rf <- tableOfConfidence[,4]
+preds$middle_rf <- predictions
+preds$sd <- preds$middle_rf - tableOfConfidence[,1]
+
+preds %>% 
+  filter(rank < 20) %>% 
+  ggplot(., aes( x = rank, y = middle_rf, color = position)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_point(aes(y = lower_bound_rf), size = .5) +
+  geom_point(aes(y = upper_bound_rf), size = .5) +
+  facet_wrap(~Name) +
+  theme_bw() 
+
+
+preds %>% 
+  arrange(rank) %>% 
+  select(Name, team.x, position.x, rank, middle_rf, lower_bound_rf, upper_bound_rf, PAR)
+```
+
+```{r}
+individuals <- as.data.frame(intervals$individual)
+individuals$Name <- preds$Name 
+
+individuals_long <- individuals %>% 
+  pivot_longer(-Name, names_to = 'pred') %>% 
+  inner_join(preds, by = c('Name' = 'Name')) %>% 
+  select(Name, rank, value, position, nextSeasonPAR) 
+
+
+individuals_long %>% 
+  filter(rank <= 20) %>% 
+  ggplot(., aes(x = value, y = as.factor(rank))) +
+  stat_density_ridges(quantile_lines = TRUE, quantiles = 2) +
+  theme_minimal()
+
+
+grouped_indis <- individuals_long %>% 
+  group_by(Name, rank, nextSeasonPAR, position) %>% 
+  dplyr::summarise(med = median(value)) %>% 
+  arrange(-(med)) 
+
+cor(grouped_indis$nextSeasonPAR, grouped_indis$med)
+
+ggplot(grouped_indis, aes(x = rank, y = med, color = position)) +
+  geom_point() + 
+  theme_bw() +
+  facet_wrap(~position) 
+
+ggplot(grouped_indis, aes(x = rank, y = med - nextSeasonPAR, color = position)) +
+  geom_point() + 
+  theme_bw() +
+  geom_smooth(method = 'lm') +
+  facet_wrap(~position) 
+
+individuals$middle_rf <- preds$middle_rf
+individuals$position <- preds$position
+individuals <- individuals %>% 
+  dplyr::group_by(position) %>% 
+  dplyr::arrange(position, -middle_rf) %>% 
+  dplyr::mutate(teamRank = row_number())
+
+
+individuals
+```
+
+
+Join with ADP data
+```{r}
+adpCopy <- espnADP
+#logged data
+splitty <- str_split(adpCopy$Name, " ")
+i = 1
+for (i in 1:nrow(adpCopy)) {
+  firstName <- splitty[[i]][1]
+  lastName <- splitty[[i]][2]
+  name <- paste0(firstName, " ", lastName)
+  
+  adpCopy$Name[i] <- name
+}
+adpCopy$Name <- str_replace_all(adpCopy$Name, "[[:punct:]]", " ")
+adpCopy$Name <- gsub(" ", "", adpCopy$Name, fixed = TRUE)
+adpCopy <- adpCopy %>% 
+  filter(Name != "NANA") 
+
+
+preds_copy <- preds %>% filter(Name != 'JKDobbins')
+preds_copy <- preds_copy %>% 
+  left_join(adpCopy %>% select(Name, ADP), by = c("Name" = "Name")) %>% 
+  dplyr::mutate(ADP = ifelse(is.na(ADP), 300, ADP),
+         adpSD = rank*.25 + 1)
+```
+
+
+
+
+Ceiling Creator...
+```{r}
+roundUp <- function(x,to=numberOfTeams)
+{
+  to*(x%/%to + as.logical(x%%to))
+}
+```
+
+
+#Who's been drafted by everyone?
+```{r}
+draftedOverall <- c(
+                    )
+
+
+
+
+yourTeam <- c(
+              )
+
+```
+
+
+
+#OPTIMIZER ALERT WEE WOO WEE WOO#
+```{r}
+#variable initialization
+individuals <- individuals
+copy <- preds_copy 
+copy <- copy %>% 
+  dplyr::select(Name, position, rank,  PAR, nextSeasonPAR, middle_rf, ADP, adpSD) %>% 
+  dplyr::mutate(ADP = rank * 1.2,
+                adpSD = rank*.5 + 1)
+rb <- 0 
+wr <- 0 
+te <- 0
+qb <- 0 
+st <- 0
+other <- 0
+availableRBs <- TRUE
+availableWRs <- TRUE
+availableFLEX <- TRUE & isFlex
+availableTEs <- TRUE
+availableQBs <- TRUE
+availableSTs <- TRUE
+PAR <- 0
+valueOverStarter <- 0 
+createdDataframe <- data.frame()
+secondDataframe <- data.frame()
+
+
+
+#creating the relative rank of the players drafted
+yourDraft <- individuals[individuals$Name %in% yourTeam,]
+yourDraft <- yourDraft %>% 
+  dplyr::group_by(position) %>% 
+  dplyr::arrange(position, -middle_rf) %>% 
+  dplyr::mutate(teamRank = row_number())
+
+first_rb <- yourDraft[yourDraft$teamRank == 1 & yourDraft$position == "RB",]
+second_rb <- yourDraft[yourDraft$teamRank == 2 & yourDraft$position == "RB",]
+third_rb <- yourDraft[yourDraft$teamRank == 3 & yourDraft$position == "RB",]
+first_wr <- yourDraft[yourDraft$teamRank == 1 & yourDraft$position == "WR",]
+second_wr <- yourDraft[yourDraft$teamRank == 2 & yourDraft$position == "WR",]
+third_wr <- yourDraft[yourDraft$teamRank == 3 & yourDraft$position == "WR",]
+first_te <- yourDraft[yourDraft$teamRank == 1 & yourDraft$position == "TE",]
+first_qb <- yourDraft[yourDraft$teamRank == 1 & yourDraft$position == "QB",]
+
+first_flex <- if(max(third_rb$middle_rf, -999) > max(third_wr$middle_rf, -999)) {
+  third_rb
+} else {
+  third_wr
+}
+  
+replacement_rb <- individuals[individuals$position == 'RB' & individuals$teamRank == 26, 1:500]
+replacement_wr <- individuals[individuals$position == 'WR' & individuals$teamRank == 26, 1:500]
+replacement_te <- individuals[individuals$position == 'TE' & individuals$teamRank == 11, 1:500]
+replacement_qb <- individuals[individuals$position == 'QB' & individuals$teamRank == 11, 1:500]
+
+t_rb <- as.data.frame(t(replacement_rb))
+rbs <- bind_rows(as.data.frame(t(transform(t_rb, V1 = sample(V1)))),
+                 as.data.frame(t(transform(t_rb, V1 = sample(V1)))),
+                 as.data.frame(t(transform(t_rb, V1 = sample(V1)))))
+if(nrow(first_rb) > 0) {
+  rbs[1,] <- first_rb[,1:500]
+}
+if(nrow(second_rb) > 0) {
+  rbs[2,] <- second_rb[,1:500]
+}
+if(nrow(first_flex) > 0) {
+  rbs[3,] <- first_flex[,1:500]
+}
+
+t_wr <- as.data.frame(t(replacement_wr))
+wrs <- bind_rows(as.data.frame(t(transform(t_wr, V1 = sample(V1)))),
+                 as.data.frame(t(transform(t_wr, V1 = sample(V1)))),
+                 as.data.frame(t(transform(t_wr, V1 = sample(V1)))))
+if(nrow(first_wr) > 0) {
+  wrs[1,] <- first_wr[,1:500]
+}
+if(nrow(second_wr) > 0) {
+  wrs[2,] <- second_wr[,1:500]
+}
+if(nrow(first_flex) > 0) {
+  wrs[3,] <- first_flex[,1:500]
+}
+
+tes <- replacement_te
+if(nrow(first_te) > 0) {
+  tes[1,] <- first_te[,1:500]
+}
+
+qbs <- replacement_qb
+if(nrow(first_qb) > 0) {
+  qbs[1,] <- first_qb[,1:500]
+}
+
+rbs <- t(apply(rbs, 2, min))
+wrs <- t(apply(wrs, 2, min))
+
+#get available players
+available <- copy[!copy$Name %in% draftedOverall,] %>% group_by(position) %>%  arrange(rank) %>% dplyr::slice(1:100)
+
+j = 23
+j
+for (j in 1:nrow(available)) {
+  player <- available[j,]
+  name <- player$Name
+  position <- player$position
+  positional_df <- tes
+  
+  if (position == 'RB') positional_df <- rbs
+  if (position == 'WR') positional_df <- wrs
+  if (position == 'TE') positional_df <- tes
+  if (position == 'QB') positional_df <- qbs
+  
+  indi_preds <- individuals[individuals$Name == name & individuals$position == position,1:500][1,]
+  total_pt_gains <- 0
+  pct_better <- 0
+  
+  for (i in 1:nrow(positional_df)) {
+    row <- positional_df[i,]
+    better <- t(indi_preds) > rev(t(row))
+    pct_better <- max(pct_better, sum(better) / 500)
+    avg_pts_gains <- mean(t(indi_preds)[better] - rev(t(row))[which(better)])
+    total_pt_gains <- max(total_pt_gains, pct_better * avg_pts_gains)
+  }
+  
+  
+  #Finding pick number, your next pick, and the likelihood of a player staying on board
+  pickNumber <- length(draftedOverall) + 1
+  ceiling <- roundUp(pickNumber)
+  leftTillEndOfRound <- ceiling - pickNumber
+  nextPick <- ceiling + leftTillEndOfRound + 1
+  
+  chanceOfStayingOnBoard <- round(1 - pnorm(nextPick, player$ADP, player$adpSD), 2)
+  
+  
+  #round after likelihood
+  ceiling <- roundUp(nextPick)
+  leftTillEndOfRound <- ceiling - nextPick
+  pickAfter <- ceiling + leftTillEndOfRound + 1
+  
+  chanceOfStayingOnBoardTwoRounds <- 1 - pnorm(pickAfter, player$ADP, player$adpSD)
+  
+  #round after...
+  ceiling <- roundUp(pickAfter)
+  leftTillEndOfRound <- ceiling - pickAfter
+  pickEvenAfter <- ceiling + leftTillEndOfRound + 1
+  
+  chanceOfStayingOnThreeRounds <- 1 - pnorm(pickEvenAfter, player$ADP, player$adpSD)
+  
+  
+  CreatedRow <- data.frame(player$Name,
+                           position,
+                           player$middle_rf,
+                           pct_better,
+                           player$ADP,
+                           total_pt_gains,
+                           chanceOfStayingOnBoard,
+                           chanceOfStayingOnBoardTwoRounds,
+                           chanceOfStayingOnThreeRounds)
+  createdDataframe <- rbind(createdDataframe, CreatedRow)
+}
+
+createdDataframe <- createdDataframe %>% 
+  dplyr::rename(Name = player.Name,
+                PAR = player.middle_rf,
+                adp = player.ADP) %>% 
+  arrange(-PAR)
+
+#find the chance of all players of the same position sticking around to next round
+i = 1
+for (i in 1:nrow(createdDataframe)) {
+  newRow <- createdDataframe[i,]
+  playerPosition <- as.character(newRow$position)
+  
+  positionallyFiltered <- createdDataframe %>% 
+    filter(position == playerPosition) %>% 
+    arrange(-total_pt_gains) %>% 
+    dplyr::slice(1:12)
+  
+  
+  positionallyFiltered$chance_of_best_option <- 0
+  positionallyFiltered$chance_of_best_option_2 <- 0
+  positionallyFiltered$chance_of_best_option_3 <- 0
+  
+  j = 7
+  #find the chance that each player for each position is going to be the best player available come next pick
+  for (j in 1:nrow(positionallyFiltered)) {
+    row <- positionallyFiltered[j,]
+    better_players <- positionallyFiltered[positionallyFiltered$total_pt_gains > row$total_pt_gains,]
+    
+    p_noone_better <- prod(1-better_players$chanceOfStayingOnBoard)
+    p_avail <- row$chanceOfStayingOnBoard
+    p_best_option <- p_noone_better * p_avail
+    row$chance_of_best_option <- p_best_option
+    
+    p_noone_better <- prod(1-better_players$chanceOfStayingOnBoardTwoRounds)
+    p_avail <- row$chanceOfStayingOnBoardTwoRounds
+    p_best_option <- p_noone_better * p_avail
+    row$chance_of_best_option_2 <- p_best_option
+    
+    p_noone_better <- prod(1-better_players$chanceOfStayingOnThreeRounds)
+    p_avail <- row$chanceOfStayingOnThreeRounds
+    p_best_option <- p_noone_better * p_avail
+    row$chance_of_best_option_3 <- p_best_option
+    
+    positionallyFiltered[j,] <- row
+  }
+  
+  #calculating the average positional values for ensuing rounds
+  nextRoundValue <- sum(positionallyFiltered$chance_of_best_option * positionallyFiltered$total_pt_gains) 
+  nextRoundValue[is.infinite(nextRoundValue) | is.nan(nextRoundValue)] <- 1000
+  newRow$valueOverNextRound <- newRow$total_pt_gains - nextRoundValue
+  
+  valueOverTwoRounds <- sum(positionallyFiltered$chanceOfBeingBestOptionTwoRounds * positionallyFiltered$total_pt_gains)
+  valueOverTwoRounds[is.infinite(valueOverTwoRounds) | is.nan(valueOverTwoRounds)] <- 1000
+  newRow$valueOverTwoRounds <- newRow$total_pt_gains - valueOverTwoRounds
+  
+  valueOverThreeRounds <- sum(positionallyFiltered$chanceOfBeingBestOptionTwoRounds * positionallyFiltered$total_pt_gains) 
+  valueOverThreeRounds[is.infinite(valueOverThreeRounds) | is.nan(valueOverThreeRounds)] <- 1000
+  newRow$valueOverThreeRounds <- newRow$total_pt_gains - valueOverThreeRounds
+  
+  secondDataframe <- rbind(secondDataframe, newRow)
+} 
+
+
+#show me the money
+View(secondDataframe %>% 
+       mutate(total_pt_gains = round(total_pt_gains, 1),
+              PAR = round(PAR,1), 
+              value_over_starter = round(valueOverStarter,1),
+              chance_of_staying_on_board = round(chanceOfStayingOnBoard, 2),
+              value_over_next_round = round(valueOverNextRound, 1)) %>% 
+       select(Name, 
+              position, 
+              total_pt_gains,
+              adp,
+              chance_of_staying_on_board,
+              value_over_next_round, 
+              PAR) %>%
+       arrange(-value_over_next_round)
+       )
+```
+
+
+```{r}
+d <- secondDataframe %>% filter(position == 'TE')
+lo <- loess(total_pt_gains ~ adp, d)
+
+d$resid <- d$total_pt_gains - predict(lo, d)
+
+d %>% arrange(-resid)
+```
+
+```{r}
+preds %>% arrange(-sd_PAR)
+```
+
+
+
+
+```{r}
+write.csv(secondDataframe %>% arrange(-total_pt_gains), 'dad_ranks.csv')
+```
+
+```{r}
+combo2 %>% 
+  filter(Name == 'JameisWinston') %>% 
+  select(Name, position.x, team.x, PAR, depthChart)
+```
+
+```{r}
+bd_rf <- local_attributions(rf,
+                            data = preds,
+                            new_observation =  preds[preds$Name == 'DavanteAdams',])
+```
+
+```{r}
+bd_rf %>% arrange(-abs(contribution))
+
+
+preds %>% 
+  filter(Name == 'DavanteAdams') %>% 
+  select(Name, team, position, depthChart, nextSeasonsTeam)
+```
+
+```{r}
+mean(as.numeric(t(individuals %>% filter(Name == 'MichaelThomas'))[1:500,1]))
+mean(as.numeric(t(individuals %>% filter(Name == 'JameisWinston'))[1:500,1]))
+```
+
+```{r}
+secondDataframe %>% 
+  filter(Name %in% c(
+    'JalenHurts',
+    'ChristianMcCaffrey',
+    'JamesRobinson',
+    'CalvinRidley',
+    'DKMetcalf',
+    'JonnuSmith',
+    'CourtlandSutton'
+  )) %>% 
+  summarise(pts = sum(total_pt_gains)) %>% 
+  .$pts
+```
+
+```{r}
+data.frame(names = c(
+  'soslow',
+  'Fleetwood',
+  'PJ',
+  'Rad',
+  'Haas',
+  'Olsen',
+  'Castan',
+  'Alan',
+  'Swoff',
+  'Reed'
+),
+projection = c(
+  829,
+  746,
+  665,
+  734,
+  763,
+  726,
+  635,
+  720,
+  725,
+  586
+)) %>% 
+  arrange(-projection)
+
+```
+
+```{r}
+write_csv(secondDataframe, "ranks_2021.csv")
+```
+
