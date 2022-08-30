@@ -1605,7 +1605,7 @@ preds <- combo2 %>% filter(year == season)
 
 #model using lasso vars
 ```{r}
-rf2022 <- randomForest(nextSeasonPAR ~
+rf <- randomForest(nextSeasonPAR ~
                      .
                      , 
       data = train)
