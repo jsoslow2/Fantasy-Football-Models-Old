@@ -1,5 +1,5 @@
 # Fantasy-Football-Models
-Beating my friends with data science
+This is the old fantasy football models github - built in R
 
 
 To use the model
